@@ -1,6 +1,7 @@
 uniform mat4 g_WorldViewProjectionMatrix;
 uniform mat4 g_ViewMatrix;
 uniform mat4 g_ProjectionMatrix;
+uniform mat4 g_ViewProjectionMatrix;
 uniform mat4 g_WorldMatrix;
 uniform vec3 g_CameraPosition;
 
@@ -123,21 +124,27 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
 
 void main() {
 
-    // Right now we calculate as if we are in real world
-    // space inside a giant dome.
-	vec3 direction = inPosition - g_CameraPosition;
+    // The sky always moves with the camera and we adjust 
+    // how we see it otherwise.
+    vec4 pos = vec4(inPosition, 1.0);
+    
+	float elevation = g_CameraPosition.y;
+    
+	vec3 direction = pos.xyz;
+	direction.y -= elevation; 
 	float distance = length(direction);
 	direction /= distance;
-	float elevation = g_CameraPosition.y - m_InnerRadius;
+	
 	vec3 rColor = vec3(0.0, 0.0, 0.0);
 	vec3 mColor = vec3(0.0, 0.0, 0.0);
 	                    
-    calculateSkyInAtmosphere(direction, distance, elevation, rColor, mColor );
+    calculateSkyInAtmosphere(direction, distance, elevation, rColor, mColor);
     vRayleighColor.rgb = rColor;
     vMieColor.rgb = mColor;
 	
-	gl_Position = g_WorldViewProjectionMatrix * vec4(inPosition, 1.0);
-	vBackDirection = g_CameraPosition - inPosition;
+	//gl_Position = g_WorldViewProjectionMatrix * vec4(inPosition, 1.0);
+	gl_Position = g_ViewProjectionMatrix * vec4(inPosition, 1.0);
+	vBackDirection = -direction; //g_CameraPosition - inPosition;
 }
 
 
