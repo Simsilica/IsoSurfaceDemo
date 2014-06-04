@@ -128,10 +128,16 @@ void main() {
     // how we see it otherwise.
     vec4 pos = vec4(inPosition, 1.0);
     
-	float elevation = g_CameraPosition.y;
-    
+    // The idea being that for elevation changes large enough
+    // to affect atmospherics that we'd want to change the horizon
+    // line and relative atmospheric depth and so on.  In reality,
+    // this tends to distort the sun and I'm not sure why.
+    // No flight sims for us, I guess. ;)    
+	float elevation = 0.0;
+	pos.y -= elevation;
+	 
 	vec3 direction = pos.xyz;
-	direction.y -= elevation; 
+
 	float distance = length(direction);
 	direction /= distance;
 	
@@ -141,10 +147,11 @@ void main() {
     calculateSkyInAtmosphere(direction, distance, elevation, rColor, mColor);
     vRayleighColor.rgb = rColor;
     vMieColor.rgb = mColor;
-	
-	//gl_Position = g_WorldViewProjectionMatrix * vec4(inPosition, 1.0);
-	gl_Position = g_ViewProjectionMatrix * vec4(inPosition, 1.0);
-	vBackDirection = -direction; //g_CameraPosition - inPosition;
+
+    vec4 temp = g_ViewMatrix * vec4(inPosition, 0.0);
+    temp.w = 1.0; 	
+	gl_Position = g_ProjectionMatrix * temp;
+	vBackDirection = -direction; 
 }
 
 
