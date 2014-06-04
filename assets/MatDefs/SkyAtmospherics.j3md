@@ -29,6 +29,8 @@ MaterialDef Sky Atmospheric Scattering {
         
         // Flattens out the sampling 1.0 = 100% flat-earth, 0 = fully curved 
         Float Flattening
+        
+        Float PlanetScale : 1.0
     }
 
     Technique {

@@ -16,6 +16,7 @@ uniform vec3 m_InvWaveLength;
 uniform float m_RayleighScaleDepth;       
 uniform float m_MieScaleDepth;
 
+uniform float m_PlanetScale;
 uniform float m_Flattening;
 
 
@@ -55,7 +56,7 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
     // scale versus the radius tells us which part of the sphere
     // we are actually looking at.
     //float planetScale = 0.001;  // needs to be a parameter
-    float planetScale = 1.0;  // needs to be a parameter
+    float planetScale = m_PlanetScale; //1.0;  // needs to be a parameter
 
     // Setup some relative constants and useful aliases
     float scaleDepth = m_RayleighScaleDepth;  
