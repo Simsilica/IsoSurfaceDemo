@@ -20,11 +20,11 @@ void main() {
     float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * (1.0 + fCos * fCos) / pow(1.0 + g2 - 2.0 * g * fCos, 1.5);
     
     #ifndef GAMMA
-        gl_FragColor = vRayleighColor + fMiePhase * vMieColor;
+        gl_FragColor = (vRayleighColor + fMiePhase * vMieColor) * m_Exposure;
     #else
         vec4 color = vRayleighColor + fMiePhase * vMieColor;
         color *= m_Exposure; 
-        gl_FragColor.xyz = pow(color.xyz, vec3(GAMMA));        
+        gl_FragColor.xyz = pow(color.xyz, vec3(GAMMA));
     #endif
 	gl_FragColor.a = gl_FragColor.b;
 }

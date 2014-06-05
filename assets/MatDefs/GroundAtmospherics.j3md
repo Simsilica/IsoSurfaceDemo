@@ -1,0 +1,50 @@
+MaterialDef Ground Atmospheric Scattering {
+
+    MaterialParameters {
+
+        // Rayleigh, Rayleigh * 4 PI,
+        // Mie, Mie * 4 PI
+        Vector4 ScatteringConstants
+ 
+        // Mie Phase Asym Factor       
+        Float MpaFactor
+ 
+        Vector3 LightDirection
+        
+        Float LightIntensity
+        
+        Float Exposure
+        
+        Float InnerRadius
+        
+        Float OuterRadius
+        
+        Float RadiusScale
+        
+        Vector3 InvWaveLength
+        
+        Float RayleighScaleDepth
+
+        Float MieScaleDepth
+    }
+
+    Technique {
+
+        VertexShader GLSL110:   MatDefs/GroundAtmospherics.vert
+        FragmentShader GLSL110: MatDefs/GroundAtmospherics.frag
+
+        WorldParameters {
+            WorldViewProjectionMatrix
+            ViewProjectionMatrix
+            WorldViewMatrix
+            ViewMatrix
+            ProjectionMatrix
+            WorldMatrix
+            CameraPosition
+        }
+
+        Defines {
+        }
+    }
+
+}

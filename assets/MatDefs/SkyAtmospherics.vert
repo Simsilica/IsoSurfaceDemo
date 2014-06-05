@@ -35,8 +35,8 @@ const float fSamples = 2.0;
 //const float fSamples = 4.0;
 
 float scale( float fCos ) {
-	float x = 1.0 - fCos;
-	return m_RayleighScaleDepth * exp(-0.00287 + x*(0.459 + x*(3.83 + x*(-6.80 + x*5.25))));
+    float x = 1.0 - fCos;
+    return m_RayleighScaleDepth * exp(-0.00287 + x*(0.459 + x*(3.83 + x*(-6.80 + x*5.25))));
 }
 
 void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float elevation, out vec3 rColor, out vec3 mColor ) {
@@ -110,7 +110,54 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
         accumulator += attenuation * (depth * scaledLength);
         
         // Step the sample point to the next value
-        samplePoint += sampleStep;      
+        samplePoint += sampleStep;
+
+        // The in-scattering equation:
+        // 
+        // Iv(waveLength) = sunligh * K(wavelength) * F(theta, g)
+        //    * diff[Pa-Pb] { 
+        //          exp(-h/H0) * exp(-t(PPc, wavelength) - t(PPa, wavelength)) 
+        //      }
+        //
+        //  PPc is the ray from the point to the sun.
+        //  PPa is the ray from the point to the camera. 
+        //
+        // F(theta, g) is the phase function.  That's a complicated bit.
+        // 
+        // K(wavelength) = Kr / pow(waveLength, 4) + Km
+        //
+        // ...for us invWaveLength is already 1/pow(wavelength, 4)
+        // so K(wavelength) = Kr * invWaveLength + Km
+        //
+        // The full out-scattering equation is:
+        // t(Pa, Pb, wavelength) = 4 * PI * K(wavelength) 
+        //              * diff[Pa-Pb] { exp(-h/H0) }
+        //
+        // The ending differential equation seems to be the average
+        // atmospheric density along the ray multiplied by the length.
+        // It's a guess as to how many air particles exist along the ray.
+        //
+        // We are sampling so the differential equation unrolls and:
+        // h is heightAbove seal level
+        // H0 is the height of average density... in this case scaleDepth * (outer - inner)
+        //
+        // We've precalculated fScaleOverScaleDepth to avoid a divide
+        //  1 / ((outer - inner) * scaleDepth)
+        //
+        // So, the differential part is actually:
+        //   depth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight))
+        //
+        // So, t(waveLength) = 4 * PI * K(wavelength) * depth
+        // K(wavelength) is invWavelength * Kr + km but we already have premultiplied
+        // versions of the constants.
+        // K(wavelength) = invWaveLength * Kr4PI + Km4PI
+        // 
+        // So, t(waveLength) = depth * (invWaveLength * Kr4PI + Km4PI)
+        // ...and that's the out scattering function
+        //
+        //    
+          
+              
     }
 
     // Now set the out parameters
@@ -133,25 +180,25 @@ void main() {
     // line and relative atmospheric depth and so on.  In reality,
     // this tends to distort the sun and I'm not sure why.
     // No flight sims for us, I guess. ;)    
-	float elevation = 0.0;
-	pos.y -= elevation;
-	 
-	vec3 direction = pos.xyz;
+    float elevation = 0.0;
+    pos.y -= elevation;
+     
+    vec3 direction = pos.xyz;
 
-	float distance = length(direction);
-	direction /= distance;
-	
-	vec3 rColor = vec3(0.0, 0.0, 0.0);
-	vec3 mColor = vec3(0.0, 0.0, 0.0);
-	                    
+    float distance = length(direction);
+    direction /= distance;
+    
+    vec3 rColor = vec3(0.0, 0.0, 0.0);
+    vec3 mColor = vec3(0.0, 0.0, 0.0);
+                        
     calculateSkyInAtmosphere(direction, distance, elevation, rColor, mColor);
     vRayleighColor.rgb = rColor;
     vMieColor.rgb = mColor;
 
     vec4 temp = g_ViewMatrix * vec4(inPosition, 0.0);
-    temp.w = 1.0; 	
-	gl_Position = g_ProjectionMatrix * temp;
-	vBackDirection = -direction; 
+    temp.w = 1.0;     
+    gl_Position = g_ProjectionMatrix * temp;
+    vBackDirection = -direction; 
 }
 
 
