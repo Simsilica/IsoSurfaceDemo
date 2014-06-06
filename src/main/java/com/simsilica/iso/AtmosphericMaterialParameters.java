@@ -129,7 +129,6 @@ public class AtmosphericMaterialParameters {
 
     protected void updateSkyMaterial( Material m ) {    
         m.setFloat("LightIntensity", lightIntensity);
-        m.setFloat("MpaFactor", mpaFactor);
         m.setFloat("Exposure", skyExposure);
         m.setFloat("InnerRadius", innerRadius);
         m.setFloat("OuterRadius", outerRadius);
@@ -155,6 +154,31 @@ public class AtmosphericMaterialParameters {
         kWavelengths4PI.x = invPow4Wavelengths.x * r4PI + m4PI;            
         kWavelengths4PI.y = invPow4Wavelengths.y * r4PI + m4PI;            
         kWavelengths4PI.z = invPow4Wavelengths.z * r4PI + m4PI;            
+    }
+
+    public void applyGroundParameters( Material m ) {
+        // We may have never set them before
+        m.setVector4("ScatteringConstants", scatteringConstants);
+        m.setVector3("LightPosition", lightPosition);
+        m.setVector3("InvWavelengths", invPow4Wavelengths);        
+        m.setVector3("KWavelengths4PI", kWavelengths4PI);
+                
+        m.setFloat("LightIntensity", lightIntensity);
+        m.setFloat("Exposure", groundExposure);
+        m.setFloat("InnerRadius", innerRadius);
+        m.setFloat("OuterRadius", outerRadius);
+        m.setFloat("RadiusScale", 1 / (outerRadius - innerRadius));
+        m.setFloat("PlanetScale", outerRadius / planetRadius); 
+        m.setFloat("AverageDensityScale", averageDensityScale);
+        m.setFloat("InvAverageDensityHeight", 1 / ((outerRadius - innerRadius) * averageDensityScale));
+ 
+        //vec3 attenuation = exp(-scatter * (m_InvWavelengths * r4PI + m4PI));
+        // K(wavelengths) * 4 * PI = m_InvWavelengths * r4PI + m4PI        
+        float r4PI = scatteringConstants.y; 
+        float m4PI = scatteringConstants.w; 
+        kWavelengths4PI.x = invPow4Wavelengths.x * r4PI + m4PI;            
+        kWavelengths4PI.y = invPow4Wavelengths.y * r4PI + m4PI;            
+        kWavelengths4PI.z = invPow4Wavelengths.z * r4PI + m4PI;                   
     }
 
     /**
@@ -239,6 +263,18 @@ public class AtmosphericMaterialParameters {
     public float getMieConstant() {
         return scatteringConstants.z;
     }
+    
+    public final void setMiePhaseAsymmetryFactor( float f ) {
+        if( this.mpaFactor == f ) {
+            return;
+        }
+        this.mpaFactor = f;
+        updateMaterials();
+    }
+    
+    public float getMiePhaseAssymmetryFactor() {
+        return mpaFactor;
+    }
  
     public void setLightDirection( Vector3f dir ) {
         lightPosition.set(-dir.x, -dir.y, -dir.z);
@@ -246,6 +282,18 @@ public class AtmosphericMaterialParameters {
     
     public Vector3f getLightDirection() {
         return lightPosition.negate();
+    }
+    
+    public void setLightIntensity( float f ) {
+        if( this.lightIntensity == f ) {
+            return;
+        }
+        this.lightIntensity = f;
+        updateMaterials();
+    }
+    
+    public float getLightIntensity() {
+        return lightIntensity;
     }
     
     public final void setWavelengths( float r, float g, float b ) {

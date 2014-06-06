@@ -6,7 +6,6 @@ uniform mat4 g_WorldMatrix;
 uniform vec3 g_CameraPosition;
 
 uniform vec4 m_ScatteringConstants;
-uniform float m_MpaFactor;
 uniform vec3 m_LightPosition;
 uniform float m_LightIntensity;
 uniform float m_Exposure;
@@ -14,6 +13,7 @@ uniform float m_InnerRadius;
 uniform float m_OuterRadius;
 uniform float m_RadiusScale;
 uniform vec3 m_InvWavelengths;
+uniform vec3 m_KWavelengths4PI;        
 uniform float m_AverageDensityScale;       
 uniform float m_InvAverageDensityHeight;
 
@@ -45,8 +45,8 @@ void calculateGroundInAtmosphere( in vec3 direction, in float distance, in float
     float scaleOverScaleDepth = m_InvAverageDensityHeight; //(1.0 / (m_OuterRadius - m_InnerRadius)) / scaleDepth;
     float rESun = m_ScatteringConstants.x * m_LightIntensity;
     float mESun = m_ScatteringConstants.z * m_LightIntensity;
-    float r4PI = m_ScatteringConstants.y;    
-    float m4PI = m_ScatteringConstants.w;
+    //float r4PI = m_ScatteringConstants.y;    
+    //float m4PI = m_ScatteringConstants.w;
  
     // Create a camera position relative to sea level
     // From here on, positions will be relative to sea level so that
@@ -92,7 +92,10 @@ void calculateGroundInAtmosphere( in vec3 direction, in float distance, in float
         scatter = startOffset + depth * (scale(lightAngle) - scale(cameraAngle));
 
         // m_InvWaveLength = 1 / (waveLength ^ 4)
-        attenuation = exp(-scatter * (m_InvWavelengths * r4PI + m4PI));
+        // m_KWavelengths4PI = K(wavelength) * 4 * PI
+        //  = (m_InvWavelengths * r4PI + m4PI) 
+        //attenuation = exp(-scatter * (m_InvWavelengths * r4PI + m4PI));
+        attenuation = exp(-scatter * m_KWavelengths4PI);
         
         accumulator += attenuation * (depth * scaledLength);
         

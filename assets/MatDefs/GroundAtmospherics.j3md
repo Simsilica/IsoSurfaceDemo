@@ -20,6 +20,8 @@ MaterialDef Ground Atmospheric Scattering {
         Float OuterRadius
         
         Float RadiusScale
+
+        Float PlanetScale : 1
         
         Vector3 InvWavelengths
         
@@ -27,7 +29,8 @@ MaterialDef Ground Atmospheric Scattering {
 
         Float InvAverageDensityHeight;
 
-        Float MieScaleDepth
+        // Precalculated K(wavelengths) function premultiplied by 4 PI
+        Vector3 KWavelengths4PI;        
     }
 
     Technique {
