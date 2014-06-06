@@ -9,7 +9,7 @@ MaterialDef Sky Atmospheric Scattering {
         // Mie Phase Asym Factor       
         Float MpaFactor
  
-        Vector3 LightDirection
+        Vector3 LightPosition
         
         Float LightIntensity
         
@@ -21,16 +21,23 @@ MaterialDef Sky Atmospheric Scattering {
         
         Float RadiusScale
         
-        Vector3 InvWaveLength
+        Vector3 InvWavelengths
         
-        Float RayleighScaleDepth
+        Float AverageDensityScale
 
-        Float MieScaleDepth
-        
+        Float InvAverageDensityHeight;
+
         // Flattens out the sampling 1.0 = 100% flat-earth, 0 = fully curved 
         Float Flattening
         
         Float PlanetScale : 1.0
+        
+        Float PhasePrefix1;
+        Float PhasePrefix2;
+        Float PhasePrefix3;
+ 
+        // Precalculated K(wavelengths) function premultiplied by 4 PI
+        Vector3 KWavelengths4PI;        
     }
 
     Technique {

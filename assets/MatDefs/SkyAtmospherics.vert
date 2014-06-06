@@ -7,15 +7,16 @@ uniform vec3 g_CameraPosition;
 
 uniform vec4 m_ScatteringConstants;
 uniform float m_MpaFactor;
-uniform vec3 m_LightDirection;
+uniform vec3 m_LightPosition;
 uniform float m_LightIntensity;
 uniform float m_Exposure;
 uniform float m_InnerRadius;
 uniform float m_OuterRadius;
 uniform float m_RadiusScale;
-uniform vec3 m_InvWaveLength;
-uniform float m_RayleighScaleDepth;       
-uniform float m_MieScaleDepth;
+uniform vec3 m_InvWavelengths;
+uniform vec3 m_KWavelengths4PI;        
+uniform float m_AverageDensityScale;       
+uniform float m_InvAverageDensityHeight;
 
 uniform float m_PlanetScale;
 uniform float m_Flattening;
@@ -36,7 +37,7 @@ const float fSamples = 2.0;
 
 float scale( float fCos ) {
     float x = 1.0 - fCos;
-    return m_RayleighScaleDepth * exp(-0.00287 + x*(0.459 + x*(3.83 + x*(-6.80 + x*5.25))));
+    return m_AverageDensityScale * exp(-0.00287 + x*(0.459 + x*(3.83 + x*(-6.80 + x*5.25))));
 }
 
 void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float elevation, out vec3 rColor, out vec3 mColor ) {
@@ -57,11 +58,12 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
     // scale versus the radius tells us which part of the sphere
     // we are actually looking at.
     //float planetScale = 0.001;  // needs to be a parameter
-    float planetScale = m_PlanetScale; //1.0;  // needs to be a parameter
+    //float planetScale = m_PlanetScale; //1.0;  // needs to be a parameter
 
     // Setup some relative constants and useful aliases
-    float scaleDepth = m_RayleighScaleDepth;  
-    float scaleOverScaleDepth = (1.0 / (m_OuterRadius - m_InnerRadius)) / scaleDepth;
+    float scaleDepth = m_AverageDensityScale;  
+    //float scaleOverScaleDepth = (1.0 / (m_OuterRadius - m_InnerRadius)) / scaleDepth;
+    float scaleOverScaleDepth = m_InvAverageDensityHeight; //1.0 / ((m_OuterRadius - m_InnerRadius) * scaleDepth);
     float rESun = m_ScatteringConstants.x * m_LightIntensity;
     float mESun = m_ScatteringConstants.z * m_LightIntensity;
     float r4PI = m_ScatteringConstants.y;    
@@ -70,10 +72,10 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
     // Create a camera position relative to sea level
     // From here on, positions will be relative to sea level so that
     // they properly track the curve of the planet   
-    vec3 camPos = vec3(0.0, m_InnerRadius + elevation * planetScale, 0.0);  
-    vec3 lightPos = -m_LightDirection;
+    vec3 camPos = vec3(0.0, m_InnerRadius + elevation, 0.0);  
+    vec3 lightPos = m_LightPosition;
     
-    float rayLength = distance * planetScale;
+    float rayLength = distance; // * planetScale;
     
     // Setup to cast the ray sections for sample accumulation
     vec3 start = camPos;
@@ -85,7 +87,7 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
     
     // Setup the loop stepping
     float sampleLength = rayLength / fSamples;
-    float scaledLength = sampleLength * m_RadiusScale;  // samppleLength * (1 / (outer - inner))  
+    float scaledLength = sampleLength * m_RadiusScale;  // sampleLength * (1 / (outer - inner))  
     vec3 sampleStep = direction * sampleLength;
     vec3 samplePoint = start + sampleStep * 0.5; // samples are in the middle of the sample ray
  
@@ -105,7 +107,10 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
         float scatter = startOffset + depth * (scale(lightAngle) - scale(cameraAngle));
 
         // m_InvWaveLength = 1 / (waveLength ^ 4)
-        vec3 attenuation = exp(-scatter * (m_InvWaveLength * r4PI + m4PI));
+        // m_KWavelengths4PI = K(wavelength) * 4 * PI
+        //  = (m_InvWavelengths * r4PI + m4PI) 
+        //vec3 attenuation = exp(-scatter * (m_InvWavelengths * r4PI + m4PI));
+        vec3 attenuation = exp(-scatter * m_KWavelengths4PI);
         
         accumulator += attenuation * (depth * scaledLength);
         
@@ -122,7 +127,8 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
         //  PPc is the ray from the point to the sun.
         //  PPa is the ray from the point to the camera. 
         //
-        // F(theta, g) is the phase function.  That's a complicated bit.
+        // F(theta, g) is the phase function.  That's a complicated bit... but it's done
+        //              in the frag shader.
         // 
         // K(wavelength) = Kr / pow(waveLength, 4) + Km
         //
@@ -166,7 +172,7 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
     mColor = accumulator * mESun;
     
     // Rayleigh color
-    rColor = accumulator * (m_InvWaveLength * rESun);
+    rColor = accumulator * (m_InvWavelengths * rESun);
 } 
 
 void main() {
@@ -191,7 +197,7 @@ void main() {
     vec3 rColor = vec3(0.0, 0.0, 0.0);
     vec3 mColor = vec3(0.0, 0.0, 0.0);
                         
-    calculateSkyInAtmosphere(direction, distance, elevation, rColor, mColor);
+    calculateSkyInAtmosphere(direction, distance * m_PlanetScale, elevation * m_PlanetScale, rColor, mColor);
     vRayleighColor.rgb = rColor;
     vMieColor.rgb = mColor;
 

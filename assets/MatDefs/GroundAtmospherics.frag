@@ -13,7 +13,7 @@ varying vec4 vColor2;
 
 void main() {
 
-    vec4 groundColor = vec4(16.0/255.0, 88.0/255.0, 18.0/255.0, 1.0);
+    vec4 groundColor = vec4(40.0/255.0, 88.0/255.0, 16.0/255.0, 1.0);
     
     #ifndef GAMMA
         gl_FragColor = (vColor + groundColor * vColor2) * m_Exposure;

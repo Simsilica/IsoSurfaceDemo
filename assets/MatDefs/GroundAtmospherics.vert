@@ -7,15 +7,15 @@ uniform vec3 g_CameraPosition;
 
 uniform vec4 m_ScatteringConstants;
 uniform float m_MpaFactor;
-uniform vec3 m_LightDirection;
+uniform vec3 m_LightPosition;
 uniform float m_LightIntensity;
 uniform float m_Exposure;
 uniform float m_InnerRadius;
 uniform float m_OuterRadius;
 uniform float m_RadiusScale;
-uniform vec3 m_InvWaveLength;
-uniform float m_RayleighScaleDepth;       
-uniform float m_MieScaleDepth;
+uniform vec3 m_InvWavelengths;
+uniform float m_AverageDensityScale;       
+uniform float m_InvAverageDensityHeight;
 
 
 attribute vec3 inPosition;
@@ -34,15 +34,15 @@ const float fSamples = 2.0;
 float scale(float fCos)
 {
 	float x = 1.0 - fCos;
-	return m_RayleighScaleDepth * exp(-0.00287 + x*(0.459 + x*(3.83 + x*(-6.80 + x*5.25))));
+	return m_AverageDensityScale * exp(-0.00287 + x*(0.459 + x*(3.83 + x*(-6.80 + x*5.25))));
 }
 
 void calculateGroundInAtmosphere( in vec3 direction, in float distance, in float elevation, out vec3 rColor, out vec3 mColor ) {
 
 
     // Setup some relative constants and useful aliases
-    float scaleDepth = m_RayleighScaleDepth;  
-    float scaleOverScaleDepth = (1.0 / (m_OuterRadius - m_InnerRadius)) / scaleDepth;
+    float scaleDepth = m_AverageDensityScale;  
+    float scaleOverScaleDepth = m_InvAverageDensityHeight; //(1.0 / (m_OuterRadius - m_InnerRadius)) / scaleDepth;
     float rESun = m_ScatteringConstants.x * m_LightIntensity;
     float mESun = m_ScatteringConstants.z * m_LightIntensity;
     float r4PI = m_ScatteringConstants.y;    
@@ -52,7 +52,7 @@ void calculateGroundInAtmosphere( in vec3 direction, in float distance, in float
     // From here on, positions will be relative to sea level so that
     // they properly track the curve of the planet   
     vec3 camPos = vec3(0.0, m_InnerRadius + elevation, 0.0);  
-    vec3 lightPos = -m_LightDirection;
+    vec3 lightPos = m_LightPosition;
     
     float rayLength = distance;
     
@@ -92,7 +92,7 @@ void calculateGroundInAtmosphere( in vec3 direction, in float distance, in float
         scatter = startOffset + depth * (scale(lightAngle) - scale(cameraAngle));
 
         // m_InvWaveLength = 1 / (waveLength ^ 4)
-        attenuation = exp(-scatter * (m_InvWaveLength * r4PI + m4PI));
+        attenuation = exp(-scatter * (m_InvWavelengths * r4PI + m4PI));
         
         accumulator += attenuation * (depth * scaledLength);
         
@@ -106,7 +106,7 @@ void calculateGroundInAtmosphere( in vec3 direction, in float distance, in float
     mColor = attenuation; 
     
     // Rayleigh color
-    rColor = accumulator * (m_InvWaveLength * rESun + mESun);
+    rColor = accumulator * (m_InvWavelengths * rESun + mESun);
 } 
 
 void main() {

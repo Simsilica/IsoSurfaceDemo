@@ -9,7 +9,7 @@ MaterialDef Ground Atmospheric Scattering {
         // Mie Phase Asym Factor       
         Float MpaFactor
  
-        Vector3 LightDirection
+        Vector3 LightPosition
         
         Float LightIntensity
         
@@ -21,9 +21,11 @@ MaterialDef Ground Atmospheric Scattering {
         
         Float RadiusScale
         
-        Vector3 InvWaveLength
+        Vector3 InvWavelengths
         
-        Float RayleighScaleDepth
+        Float AverageDensityScale
+
+        Float InvAverageDensityHeight;
 
         Float MieScaleDepth
     }
