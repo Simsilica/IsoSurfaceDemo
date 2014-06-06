@@ -16,6 +16,7 @@ uniform vec3 m_InvWavelengths;
 uniform vec3 m_KWavelengths4PI;        
 uniform float m_AverageDensityScale;       
 uniform float m_InvAverageDensityHeight;
+uniform float m_PlanetScale;
 
 
 attribute vec3 inPosition;
@@ -42,11 +43,9 @@ void calculateGroundInAtmosphere( in vec3 direction, in float distance, in float
 
     // Setup some relative constants and useful aliases
     float scaleDepth = m_AverageDensityScale;  
-    float scaleOverScaleDepth = m_InvAverageDensityHeight; //(1.0 / (m_OuterRadius - m_InnerRadius)) / scaleDepth;
+    float scaleOverScaleDepth = m_InvAverageDensityHeight; 
     float rESun = m_ScatteringConstants.x * m_LightIntensity;
     float mESun = m_ScatteringConstants.z * m_LightIntensity;
-    //float r4PI = m_ScatteringConstants.y;    
-    //float m4PI = m_ScatteringConstants.w;
  
     // Create a camera position relative to sea level
     // From here on, positions will be relative to sea level so that
@@ -120,8 +119,7 @@ void main() {
     vec3 direction = wPos.xyz - g_CameraPosition;
     
     // Need to make this a parameter
-    float scale = 1.0 / 4000.0;
-//    float scale = 1.0 / 200.0;
+    float scale = m_PlanetScale; 
     direction *= scale;
     float distance = length(direction);
     //distance = max(distance, 0.1); 

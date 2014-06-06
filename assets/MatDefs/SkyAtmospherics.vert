@@ -66,8 +66,6 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
     float scaleOverScaleDepth = m_InvAverageDensityHeight; 
     float rESun = m_ScatteringConstants.x * m_LightIntensity;
     float mESun = m_ScatteringConstants.z * m_LightIntensity;
-    //float r4PI = m_ScatteringConstants.y;    
-    //float m4PI = m_ScatteringConstants.w;
  
     // Create a camera position relative to sea level
     // From here on, positions will be relative to sea level so that
@@ -75,7 +73,7 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
     vec3 camPos = vec3(0.0, m_InnerRadius + elevation, 0.0);  
     vec3 lightPos = m_LightPosition;
     
-    float rayLength = distance; // * planetScale;
+    float rayLength = distance; 
     
     // Setup to cast the ray sections for sample accumulation
     vec3 start = camPos;

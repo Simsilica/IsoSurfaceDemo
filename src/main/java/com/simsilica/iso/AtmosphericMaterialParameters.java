@@ -168,7 +168,7 @@ public class AtmosphericMaterialParameters {
         m.setFloat("InnerRadius", innerRadius);
         m.setFloat("OuterRadius", outerRadius);
         m.setFloat("RadiusScale", 1 / (outerRadius - innerRadius));
-        m.setFloat("PlanetScale", outerRadius / planetRadius); 
+        m.setFloat("PlanetScale", innerRadius / planetRadius); 
         m.setFloat("AverageDensityScale", averageDensityScale);
         m.setFloat("InvAverageDensityHeight", 1 / ((outerRadius - innerRadius) * averageDensityScale));
  

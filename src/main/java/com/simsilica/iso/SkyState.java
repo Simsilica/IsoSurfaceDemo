@@ -245,12 +245,9 @@ private Material flatGroundMaterial;
  
         atmosphericParms = new AtmosphericMaterialParameters();
         atmosphericParms.setSkyDomeRadius(2000);
-        atmosphericParms.setPlanetRadius(400); // ???
+        atmosphericParms.setPlanetRadius(40000); 
         atmosphericParms.setLightDirection(lightDir.get());
         
-        // float groundScale = 1.0 / 4000.0;
-        // which means that 400 units = 1 radius
-
  
         // Add a sun sphere
         Sphere orb = new Sphere(6, 12, 1); //50);
