@@ -42,9 +42,11 @@ import com.jme3.app.StatsAppState;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
+import com.simsilica.builder.BuilderState;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.InputMapper;
 import com.simsilica.lemur.style.BaseStyles;
@@ -87,8 +89,11 @@ public class Main extends SimpleApplication {
  
     public Main() {
         super(new StatsAppState(), new DebugKeysAppState(),
+              new BuilderState(1, 1),
               new MovementState(),
               new LightingState(),
+              new SkyState(),
+              new DebugHudState(),
               new ScreenshotAppState("", System.currentTimeMillis())); 
     }
  
@@ -117,6 +122,8 @@ public class Main extends SimpleApplication {
         //*/ 
 
         BaseStyles.loadGlassStyle();
+        
+        cam.setLocation(new Vector3f(0, 10.1f, 0));
     }    
 }
 

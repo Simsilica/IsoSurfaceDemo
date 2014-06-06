@@ -296,6 +296,30 @@ public class AtmosphericMaterialParameters {
         return lightIntensity;
     }
     
+    public void setSkyExposure( float f ) {
+        if( this.skyExposure == f ) {
+            return;
+        }
+        this.skyExposure = f;
+        updateMaterials();        
+    }
+    
+    public float getSkyExposure() {
+        return skyExposure;
+    }
+
+    public void setGroundExposure( float f ) {
+        if( this.groundExposure == f ) {
+            return;
+        }
+        this.groundExposure = f;
+        updateMaterials();        
+    }
+    
+    public float getGroundExposure() {
+        return groundExposure;
+    }
+    
     public final void setWavelengths( float r, float g, float b ) {
         wavelengths.set(r, g, b);
         wavelengthsPow4.x = FastMath.pow(wavelengths.x, 4);

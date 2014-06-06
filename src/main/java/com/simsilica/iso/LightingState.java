@@ -65,7 +65,7 @@ public class LightingState extends BaseAppState {
     private DirectionalLight sun;
     private ColorRGBA ambientColor;
     private AmbientLight ambient;
-    private float timeOfDay = FastMath.atan2(1, 0.3f) / FastMath.PI;
+    private float timeOfDay = FastMath.atan2(1, 0.3f) / FastMath.PI;    
     private float inclination = FastMath.HALF_PI - FastMath.atan2(1, 0.4f); 
     
     private Node rootNode;  // the one we added the lights to
@@ -115,6 +115,8 @@ public class LightingState extends BaseAppState {
         ambient = new AmbientLight();
         ambient.setColor(ambientColor);
         resetLightDir();
+        
+        setTimeOfDay(0.05f);
     }
 
     @Override
