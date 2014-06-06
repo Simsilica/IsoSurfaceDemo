@@ -56,14 +56,14 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
     // So, consider that a direction straight ahead does not mean
     // we are looking at the 0 latitude of the sphere.  The planet 
     // scale versus the radius tells us which part of the sphere
-    // we are actually looking at.
-    //float planetScale = 0.001;  // needs to be a parameter
-    //float planetScale = m_PlanetScale; //1.0;  // needs to be a parameter
+    // we are actually looking at.  We put that in the caller's hands
+    // though and make them find prescaled direction and distance.
+    // By the time it gets in here it's already relative to the 
+    // inner and outer radius.
 
     // Setup some relative constants and useful aliases
     float scaleDepth = m_AverageDensityScale;  
-    //float scaleOverScaleDepth = (1.0 / (m_OuterRadius - m_InnerRadius)) / scaleDepth;
-    float scaleOverScaleDepth = m_InvAverageDensityHeight; //1.0 / ((m_OuterRadius - m_InnerRadius) * scaleDepth);
+    float scaleOverScaleDepth = m_InvAverageDensityHeight; 
     float rESun = m_ScatteringConstants.x * m_LightIntensity;
     float mESun = m_ScatteringConstants.z * m_LightIntensity;
     float r4PI = m_ScatteringConstants.y;    
