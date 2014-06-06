@@ -242,10 +242,16 @@ private Material flatGroundMaterial;
     protected void initialize( Application app ) {
     
         lightDir = getState(LightingState.class).getLightDirRef();
+
+        float earthRadius = 6378100;
+ 
+        float domeInnerRadius = 2000;
+        float domeOuterRadius = 2000 * 1.025f;
  
         atmosphericParms = new AtmosphericMaterialParameters();
-        atmosphericParms.setSkyDomeRadius(2000);
-        atmosphericParms.setPlanetRadius(40000); 
+        atmosphericParms.setSkyDomeRadius(domeOuterRadius);
+        //atmosphericParms.setPlanetRadius(40000); 
+        atmosphericParms.setPlanetRadius(earthRadius * 0.01f); 
         atmosphericParms.setLightDirection(lightDir.get());
         
  
@@ -259,11 +265,11 @@ private Material flatGroundMaterial;
         float inner = 10;
         float outer = 10.25f;
  
-        float earthRadius = 6378100;
-
         // PlanetScale is based on the difference between what we render
         // as a sky dome and the passed inner/outer values for the shader.
         float planetScale = 1f / 200;
+
+System.out.println( "planetScale:" + planetScale + "  dome inner:" + (inner/planetScale) + "  outer:" + (outer/planetScale) );
 
         Camera cam = app.getCamera();
         cam.setLocation(new Vector3f(0, 1, 0));
@@ -296,7 +302,8 @@ private Material flatGroundMaterial;
                 
         ground.setMaterial(mat);
         
-        TruncatedDome skyDome = new TruncatedDome(inner/planetScale, outer/planetScale, 100, 50, true);
+        //TruncatedDome skyDome = new TruncatedDome(inner/planetScale, outer/planetScale, 100, 50, true);
+        TruncatedDome skyDome = new TruncatedDome(domeInnerRadius, domeOuterRadius, 100, 50, true);
         sky = new Geometry("Sky", skyDome); 
         sky.setModelBound(new BoundingSphere(Float.POSITIVE_INFINITY, Vector3f.ZERO));        
         flatMaterial = GuiGlobals.getInstance().createMaterial(skyColor, false).getMaterial();
