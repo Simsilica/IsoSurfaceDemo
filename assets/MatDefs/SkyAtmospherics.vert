@@ -6,12 +6,9 @@ uniform mat4 g_WorldMatrix;
 uniform vec3 g_CameraPosition;
 
 uniform vec4 m_ScatteringConstants;
-uniform float m_MpaFactor;
 uniform vec3 m_LightPosition;
 uniform float m_LightIntensity;
-uniform float m_Exposure;
 uniform float m_InnerRadius;
-uniform float m_OuterRadius;
 uniform float m_RadiusScale;
 uniform vec3 m_InvWavelengths;
 uniform vec3 m_KWavelengths4PI;        

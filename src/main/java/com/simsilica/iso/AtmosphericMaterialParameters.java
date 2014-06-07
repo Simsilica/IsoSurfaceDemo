@@ -131,7 +131,6 @@ public class AtmosphericMaterialParameters {
         m.setFloat("LightIntensity", lightIntensity);
         m.setFloat("Exposure", skyExposure);
         m.setFloat("InnerRadius", innerRadius);
-        m.setFloat("OuterRadius", outerRadius);
         m.setFloat("RadiusScale", 1 / (outerRadius - innerRadius));
         m.setFloat("Flattening", kFlatteningSky);
         m.setFloat("PlanetScale", outerRadius / skyDomeRadius); 
@@ -166,7 +165,6 @@ public class AtmosphericMaterialParameters {
         m.setFloat("LightIntensity", lightIntensity);
         m.setFloat("Exposure", groundExposure);
         m.setFloat("InnerRadius", innerRadius);
-        m.setFloat("OuterRadius", outerRadius);
         m.setFloat("RadiusScale", 1 / (outerRadius - innerRadius));
         m.setFloat("PlanetScale", innerRadius / planetRadius); 
         m.setFloat("AverageDensityScale", averageDensityScale);

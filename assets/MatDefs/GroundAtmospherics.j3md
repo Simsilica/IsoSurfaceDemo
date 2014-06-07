@@ -7,7 +7,7 @@ MaterialDef Ground Atmospheric Scattering {
         Vector4 ScatteringConstants
  
         // Mie Phase Asym Factor       
-        Float MpaFactor
+        // Float MpaFactor
  
         Vector3 LightPosition
         
@@ -17,7 +17,7 @@ MaterialDef Ground Atmospheric Scattering {
         
         Float InnerRadius
         
-        Float OuterRadius
+        // Float OuterRadius
         
         Float RadiusScale
 
