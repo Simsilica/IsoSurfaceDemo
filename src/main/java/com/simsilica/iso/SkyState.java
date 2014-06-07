@@ -374,6 +374,8 @@ System.out.println( "Sky Material:" + m.getParams() );
         settings.setLocalTranslation(0, cam.getHeight(), 0);
         
         settings.addBooleanProperty("Flat Shaded", this, "flatShaded");
+        
+        getState(SettingsPanelState.class).getParameterTabs().addTab("Scattering", settings);        
     }
 
     @Override
@@ -387,8 +389,8 @@ System.out.println( "Sky Material:" + m.getParams() );
         rootNode.attachChild(sky);
 rootNode.attachChild(ground);
         
-        Node guiNode = ((SimpleApplication)getApplication()).getGuiNode();
-        guiNode.attachChild(settings);
+        //Node guiNode = ((SimpleApplication)getApplication()).getGuiNode();
+        //guiNode.attachChild(settings);
     }
 
     @Override
@@ -409,6 +411,6 @@ rootNode.attachChild(ground);
         sun.removeFromParent();
         sky.removeFromParent();
 ground.removeFromParent();        
-        settings.removeFromParent();
+        //settings.removeFromParent();
     }
 }

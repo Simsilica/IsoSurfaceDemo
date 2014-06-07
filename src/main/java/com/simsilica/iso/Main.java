@@ -89,6 +89,7 @@ public class Main extends SimpleApplication {
  
     public Main() {
         super(new StatsAppState(), new DebugKeysAppState(),
+              new SettingsPanelState(),
               new BuilderState(1, 1),
               new MovementState(),
               new LightingState(),
