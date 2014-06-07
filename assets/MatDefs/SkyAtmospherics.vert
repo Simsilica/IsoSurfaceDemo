@@ -10,7 +10,7 @@ uniform vec3 m_LightPosition;
 uniform float m_LightIntensity;
 uniform float m_InnerRadius;
 uniform float m_RadiusScale;
-uniform vec3 m_InvWavelengths;
+uniform vec3 m_InvWavelengthsKrESun;
 uniform vec3 m_KWavelengths4PI;        
 uniform float m_AverageDensityScale;       
 uniform float m_InvAverageDensityHeight;
@@ -167,7 +167,8 @@ void calculateSkyInAtmosphere( in vec3 direction, in float distance, in float el
     mColor = accumulator * mESun;
     
     // Rayleigh color
-    rColor = accumulator * (m_InvWavelengths * rESun);
+    //rColor = accumulator * (m_InvWavelengths * rESun);
+    rColor = accumulator * (m_InvWavelengthsKrESun);
 } 
 
 void main() {

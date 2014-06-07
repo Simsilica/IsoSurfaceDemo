@@ -71,6 +71,7 @@ public class AtmosphericMaterialParameters {
     private Vector3f wavelengths = new Vector3f();
     private Vector3f wavelengthsPow4 = new Vector3f();
     private Vector3f invPow4Wavelengths = new Vector3f();
+    private Vector3f invPow4WavelengthsKrESun = new Vector3f();
     private Vector4f scatteringConstants = new Vector4f();
     private Vector3f kWavelengths4PI = new Vector3f();
     private float mpaFactor;
@@ -112,7 +113,7 @@ public class AtmosphericMaterialParameters {
         skyMaterial = new Material(assets, "MatDefs/SkyAtmospherics.j3md");
         skyMaterial.setVector4("ScatteringConstants", scatteringConstants);
         skyMaterial.setVector3("LightPosition", lightPosition);
-        skyMaterial.setVector3("InvWavelengths", invPow4Wavelengths);        
+        skyMaterial.setVector3("InvWavelengthsKrESun", invPow4WavelengthsKrESun);        
         skyMaterial.setVector3("KWavelengths4PI", kWavelengths4PI);        
 
         updateSkyMaterial(skyMaterial);        
@@ -127,7 +128,24 @@ public class AtmosphericMaterialParameters {
         }
     }
 
+    protected void updatePackedStructures() {
+        //vec3 attenuation = exp(-scatter * (m_InvWavelengths * r4PI + m4PI));
+        // K(wavelengths) * 4 * PI = m_InvWavelengths * r4PI + m4PI        
+        float r4PI = scatteringConstants.y; 
+        float m4PI = scatteringConstants.w; 
+        kWavelengths4PI.x = invPow4Wavelengths.x * r4PI + m4PI;            
+        kWavelengths4PI.y = invPow4Wavelengths.y * r4PI + m4PI;            
+        kWavelengths4PI.z = invPow4Wavelengths.z * r4PI + m4PI;
+                    
+        float rESun = scatteringConstants.x * lightIntensity;
+        invPow4WavelengthsKrESun.x = invPow4Wavelengths.x * rESun;
+        invPow4WavelengthsKrESun.y = invPow4Wavelengths.y * rESun;
+        invPow4WavelengthsKrESun.z = invPow4Wavelengths.z * rESun;
+    }
+
     protected void updateSkyMaterial( Material m ) {    
+        updatePackedStructures();
+        
         m.setFloat("LightIntensity", lightIntensity);
         m.setFloat("Exposure", skyExposure);
         m.setFloat("InnerRadius", innerRadius);
@@ -145,21 +163,15 @@ public class AtmosphericMaterialParameters {
         m.setFloat("PhasePrefix1", phasePrefix1);                
         m.setFloat("PhasePrefix2", phasePrefix2);                
         m.setFloat("PhasePrefix3", phasePrefix3);
-
-        //vec3 attenuation = exp(-scatter * (m_InvWavelengths * r4PI + m4PI));
-        // K(wavelengths) * 4 * PI = m_InvWavelengths * r4PI + m4PI        
-        float r4PI = scatteringConstants.y; 
-        float m4PI = scatteringConstants.w; 
-        kWavelengths4PI.x = invPow4Wavelengths.x * r4PI + m4PI;            
-        kWavelengths4PI.y = invPow4Wavelengths.y * r4PI + m4PI;            
-        kWavelengths4PI.z = invPow4Wavelengths.z * r4PI + m4PI;            
     }
 
     public void applyGroundParameters( Material m ) {
+        updatePackedStructures();
+        
         // We may have never set them before
         m.setVector4("ScatteringConstants", scatteringConstants);
         m.setVector3("LightPosition", lightPosition);
-        m.setVector3("InvWavelengths", invPow4Wavelengths);        
+        m.setVector3("InvWavelengthsKrESun", invPow4WavelengthsKrESun);        
         m.setVector3("KWavelengths4PI", kWavelengths4PI);
                 
         m.setFloat("LightIntensity", lightIntensity);
@@ -169,14 +181,6 @@ public class AtmosphericMaterialParameters {
         m.setFloat("PlanetScale", innerRadius / planetRadius); 
         m.setFloat("AverageDensityScale", averageDensityScale);
         m.setFloat("InvAverageDensityHeight", 1 / ((outerRadius - innerRadius) * averageDensityScale));
- 
-        //vec3 attenuation = exp(-scatter * (m_InvWavelengths * r4PI + m4PI));
-        // K(wavelengths) * 4 * PI = m_InvWavelengths * r4PI + m4PI        
-        float r4PI = scatteringConstants.y; 
-        float m4PI = scatteringConstants.w; 
-        kWavelengths4PI.x = invPow4Wavelengths.x * r4PI + m4PI;            
-        kWavelengths4PI.y = invPow4Wavelengths.y * r4PI + m4PI;            
-        kWavelengths4PI.z = invPow4Wavelengths.z * r4PI + m4PI;                   
     }
 
     /**

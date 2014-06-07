@@ -18,7 +18,7 @@ MaterialDef Ground Atmospheric Scattering {
 
         Float PlanetScale : 1
         
-        Vector3 InvWavelengths
+        Vector3 InvWavelengthsKrESun
         
         Float AverageDensityScale
 

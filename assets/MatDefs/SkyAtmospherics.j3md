@@ -16,7 +16,7 @@ MaterialDef Sky Atmospheric Scattering {
         
         Float RadiusScale
         
-        Vector3 InvWavelengths
+        Vector3 InvWavelengthsKrESun
         
         Float AverageDensityScale
 

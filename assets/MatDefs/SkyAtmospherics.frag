@@ -1,6 +1,5 @@
 
 uniform vec3 m_LightPosition;
-uniform float m_MpaFactor;
 uniform float m_PhasePrefix1;
 uniform float m_PhasePrefix2;
 uniform float m_PhasePrefix3;
