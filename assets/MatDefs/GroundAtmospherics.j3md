@@ -6,9 +6,6 @@ MaterialDef Ground Atmospheric Scattering {
         // Mie, Mie * 4 PI
         Vector4 ScatteringConstants
  
-        // Mie Phase Asym Factor       
-        // Float MpaFactor
- 
         Vector3 LightPosition
         
         Float LightIntensity
@@ -16,8 +13,6 @@ MaterialDef Ground Atmospheric Scattering {
         Float Exposure
         
         Float InnerRadius
-        
-        // Float OuterRadius
         
         Float RadiusScale
 
