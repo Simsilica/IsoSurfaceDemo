@@ -5,8 +5,9 @@ uniform mat4 g_ViewProjectionMatrix;
 uniform mat4 g_WorldMatrix;
 uniform vec3 g_CameraPosition;
 
-uniform float m_KmESun;
 uniform vec3 m_LightPosition;
+
+uniform float m_KmESun;
 uniform float m_InnerRadius;
 uniform float m_RadiusScale;
 uniform vec3 m_InvWavelengthsKrESun;

@@ -2,14 +2,14 @@ MaterialDef Sky Atmospheric Scattering {
 
     MaterialParameters {
 
-        // Rayleigh, Rayleigh * 4 PI,
-        // Mie, Mie * 4 PI
-        Float KmESun
- 
         Vector3 LightPosition
         
         Float Exposure
+ 
+        Matrix4 ScatteringParameters
         
+        Float KmESun
+ 
         Float InnerRadius
         
         Float RadiusScale
