@@ -111,7 +111,8 @@ public class AtmosphericMaterialParameters {
         }
        
         skyMaterial = new Material(assets, "MatDefs/SkyAtmospherics.j3md");
-        skyMaterial.setVector4("ScatteringConstants", scatteringConstants);
+        //skyMaterial.setVector4("ScatteringConstants", scatteringConstants);
+        skyMaterial.setFloat("KmESun", scatteringConstants.z * lightIntensity); 
         skyMaterial.setVector3("LightPosition", lightPosition);
         skyMaterial.setVector3("InvWavelengthsKrESun", invPow4WavelengthsKrESun);        
         skyMaterial.setVector3("KWavelengths4PI", kWavelengths4PI);        
@@ -146,7 +147,8 @@ public class AtmosphericMaterialParameters {
     protected void updateSkyMaterial( Material m ) {    
         updatePackedStructures();
         
-        m.setFloat("LightIntensity", lightIntensity);
+        //m.setFloat("LightIntensity", lightIntensity);
+        m.setFloat("KmESun", scatteringConstants.z * lightIntensity); 
         m.setFloat("Exposure", skyExposure);
         m.setFloat("InnerRadius", innerRadius);
         m.setFloat("RadiusScale", 1 / (outerRadius - innerRadius));
@@ -169,12 +171,13 @@ public class AtmosphericMaterialParameters {
         updatePackedStructures();
         
         // We may have never set them before
-        m.setVector4("ScatteringConstants", scatteringConstants);
+        //m.setVector4("ScatteringConstants", scatteringConstants);
+        m.setFloat("KmESun", scatteringConstants.z * lightIntensity); 
         m.setVector3("LightPosition", lightPosition);
         m.setVector3("InvWavelengthsKrESun", invPow4WavelengthsKrESun);        
         m.setVector3("KWavelengths4PI", kWavelengths4PI);
                 
-        m.setFloat("LightIntensity", lightIntensity);
+        //m.setFloat("LightIntensity", lightIntensity);
         m.setFloat("Exposure", groundExposure);
         m.setFloat("InnerRadius", innerRadius);
         m.setFloat("RadiusScale", 1 / (outerRadius - innerRadius));

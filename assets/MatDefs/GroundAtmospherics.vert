@@ -5,9 +5,8 @@ uniform mat4 g_ProjectionMatrix;
 uniform mat4 g_WorldMatrix;
 uniform vec3 g_CameraPosition;
 
-uniform vec4 m_ScatteringConstants;
+uniform float m_KmESun;
 uniform vec3 m_LightPosition;
-uniform float m_LightIntensity;
 uniform float m_InnerRadius;
 uniform float m_RadiusScale;
 uniform vec3 m_InvWavelengthsKrESun;
@@ -42,8 +41,7 @@ void calculateGroundInAtmosphere( in vec3 direction, in float distance, in float
     // Setup some relative constants and useful aliases
     float scaleDepth = m_AverageDensityScale;  
     float scaleOverScaleDepth = m_InvAverageDensityHeight; 
-    float rESun = m_ScatteringConstants.x * m_LightIntensity;
-    float mESun = m_ScatteringConstants.z * m_LightIntensity;
+    float mESun = m_KmESun; 
  
     // Create a camera position relative to sea level
     // From here on, positions will be relative to sea level so that
@@ -106,7 +104,6 @@ void calculateGroundInAtmosphere( in vec3 direction, in float distance, in float
     mColor = attenuation; 
     
     // Rayleigh color
-    //rColor = accumulator * (m_InvWavelengths * rESun + mESun);
     rColor = accumulator * (m_InvWavelengthsKrESun + mESun);
 } 
 
