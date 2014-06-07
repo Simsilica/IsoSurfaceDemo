@@ -50,6 +50,9 @@ import com.simsilica.builder.BuilderState;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.InputMapper;
 import com.simsilica.lemur.style.BaseStyles;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,16 +74,17 @@ public class Main extends SimpleApplication {
         settings.setSettingsDialogImage("/Interface/splash.png");
         settings.setUseJoysticks(true);
         
-        /*try {
+        try {
             BufferedImage[] icons = new BufferedImage[] {
-                    ImageIO.read( TreeEditor.class.getResource( "/com/simsilica/arboreal/images/TreeEditor-icon-128.png" ) ),
-                    ImageIO.read( TreeEditor.class.getResource( "/com/simsilica/arboreal/images/TreeEditor-icon-32.png" ) ),
-                    ImageIO.read( TreeEditor.class.getResource( "/com/simsilica/arboreal/images/TreeEditor-icon-16.png" ) )
+                    ImageIO.read( Main.class.getResource( "/Interface/simsilica-128.png" ) ),
+                    ImageIO.read( Main.class.getResource( "/Interface/simsilica-64.png" ) ),
+                    ImageIO.read( Main.class.getResource( "/Interface/simsilica-32.png" ) ),
+                    ImageIO.read( Main.class.getResource( "/Interface/simsilica-16.png" ) )
                 };
             settings.setIcons(icons);
         } catch( IOException e ) {
             log.warn( "Error loading globe icons", e );
-        }*/        
+        }        
         
         main.setSettings(settings);
         
