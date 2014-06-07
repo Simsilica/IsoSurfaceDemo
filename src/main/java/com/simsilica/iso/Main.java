@@ -98,6 +98,7 @@ public class Main extends SimpleApplication {
               new MovementState(),
               new LightingState(),
               new SkyState(),
+              new TerrainState(),
               new DebugHudState(),
               new ScreenshotAppState("", System.currentTimeMillis())); 
     }
