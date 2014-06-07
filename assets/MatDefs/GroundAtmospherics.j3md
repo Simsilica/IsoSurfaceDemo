@@ -3,26 +3,17 @@ MaterialDef Ground Atmospheric Scattering {
     MaterialParameters {
 
         Vector3 LightPosition
-        
-        //Matrix4 ScatteringParameters
 
-        Float Exposure
-        
-        Float KmESun
  
-        Float InnerRadius
-        
+        // Ground scattering parameters       
+        Float Exposure        
+        Float KmESun
+        Float InnerRadius        
         Float RadiusScale
-
-        Float PlanetScale : 1
-        
-        Vector3 InvWavelengthsKrESun
-        
+        Float PlanetScale : 1        
+        Vector3 InvWavelengthsKrESun        
         Float AverageDensityScale
-
         Float InvAverageDensityHeight;
-
-        // Precalculated K(wavelengths) function premultiplied by 4 PI
         Vector3 KWavelengths4PI;        
     }
 

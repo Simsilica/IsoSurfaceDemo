@@ -76,10 +76,7 @@ public class AtmosphericMaterialParameters {
     private Vector4f scatteringConstants = new Vector4f();
     private Vector3f kWavelengths4PI = new Vector3f();
     private float mpaFactor;
-    
-    //private Matrix4f skyParameters = new Matrix4f();
-    private Matrix4f groundParameters = new Matrix4f();
-    
+        
     private float innerRadius;
     private float outerRadius;
     private float averageDensityScale;
@@ -115,8 +112,6 @@ public class AtmosphericMaterialParameters {
         }
        
         skyMaterial = new Material(assets, "MatDefs/SkyAtmospherics.j3md");
-        //skyMaterial.setVector4("ScatteringConstants", scatteringConstants);
-        skyMaterial.setFloat("KmESun", scatteringConstants.z * lightIntensity); 
         skyMaterial.setVector3("LightPosition", lightPosition);
         skyMaterial.setVector3("InvWavelengthsKrESun", invPow4WavelengthsKrESun);        
         skyMaterial.setVector3("KWavelengths4PI", kWavelengths4PI);        
@@ -146,90 +141,11 @@ public class AtmosphericMaterialParameters {
         invPow4WavelengthsKrESun.x = invPow4Wavelengths.x * rESun;
         invPow4WavelengthsKrESun.y = invPow4Wavelengths.y * rESun;
         invPow4WavelengthsKrESun.z = invPow4Wavelengths.z * rESun;
-
-        /* 
-            Sky parameters we could be collapsing here... the thing
-            is that the code is easier to read without and the sky
-            material is already a fully built material.  Unlike the
-            ground material which will be user defined and simply call
-            our function. 
-            
-            Float KmESun
-            Float InnerRadius       
-            Float RadiusScale       
-            Vector3 InvWavelengthsKrESun        
-            Float AverageDensityScale
-            Float InvAverageDensityHeight;
-            Float Flattening            
-            Float PlanetScale : 1.0        
-            Float PhasePrefix1;
-            Float PhasePrefix2;
-            Float PhasePrefix3;
-            // Precalculated K(wavelengths) function premultiplied by 4 PI
-            Vector3 KWavelengths4PI;        
-        */
-
-        /*
-            Ground parameters we will collapse here:
-                
-            Float InnerRadius        
-            Float RadiusScale
-            Float PlanetScale : 1
-                    
-            Vector3 InvWavelengthsKrESun        
-            Float KmESun
-            Vector3 KWavelengths4PI;
-            Float AverageDensityScale
-            Float InvAverageDensityHeight;
-                    
-            Float Exposure        
-        */
-        
-        
-        // So... apparently doing this is super slow.  I only converted
-        // a handful of parameters and accessing them in shader took my
-        // sample scene from 1400 FPS down to 770 FPS.  Significant.
-        
- 
- /*
-        groundParameters.m00 = innerRadius;
-        groundParameters.m10 = 1 / (outerRadius - innerRadius);
-        groundParameters.m20 = innerRadius / planetRadius;
-         
-        groundParameters.m01 = invPow4WavelengthsKrESun.x; 
-        groundParameters.m11 = invPow4WavelengthsKrESun.y; 
-        groundParameters.m21 = invPow4WavelengthsKrESun.z;
-        groundParameters.m31 = scatteringConstants.z * lightIntensity;  // KmESun*/
- 
-        //groundParameters.
-        //groundParameters.
-        //groundParameters.
-        //groundParameters.
-        //groundParameters.
-        //groundParameters.
-        //groundParameters.
-        //groundParameters.
-        //groundParameters.
-/*        
-        m.setFloat("KmESun", scatteringConstants.z * lightIntensity); 
-        m.setVector3("LightPosition", lightPosition);
-        m.setVector3("InvWavelengthsKrESun", invPow4WavelengthsKrESun);        
-        m.setVector3("KWavelengths4PI", kWavelengths4PI);
-                
-        //m.setFloat("LightIntensity", lightIntensity);
-        m.setFloat("Exposure", groundExposure);
-        m.setFloat("InnerRadius", innerRadius);
-        m.setFloat("RadiusScale", 1 / (outerRadius - innerRadius));
-        m.setFloat("PlanetScale", innerRadius / planetRadius); 
-        m.setFloat("AverageDensityScale", averageDensityScale);
-        m.setFloat("InvAverageDensityHeight", 1 / ((outerRadius - innerRadius) * averageDensityScale));
-*/        
     }
 
     protected void updateSkyMaterial( Material m ) {    
         updatePackedStructures();
         
-        //m.setFloat("LightIntensity", lightIntensity);
         m.setFloat("KmESun", scatteringConstants.z * lightIntensity); 
         m.setFloat("Exposure", skyExposure);
         m.setFloat("InnerRadius", innerRadius);
@@ -253,14 +169,11 @@ public class AtmosphericMaterialParameters {
         updatePackedStructures();
         
         // We may have never set them before
-        //m.setVector4("ScatteringConstants", scatteringConstants);
-        //m.setMatrix4("ScatteringParameters", groundParameters);
         m.setFloat("KmESun", scatteringConstants.z * lightIntensity); 
         m.setVector3("LightPosition", lightPosition);
         m.setVector3("InvWavelengthsKrESun", invPow4WavelengthsKrESun);        
         m.setVector3("KWavelengths4PI", kWavelengths4PI);
                 
-        //m.setFloat("LightIntensity", lightIntensity);
         m.setFloat("Exposure", groundExposure);
         m.setFloat("InnerRadius", innerRadius);
         m.setFloat("RadiusScale", 1 / (outerRadius - innerRadius));

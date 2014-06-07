@@ -7,7 +7,6 @@ uniform vec3 g_CameraPosition;
 
 uniform vec3 m_LightPosition;
 
-//uniform mat4 m_ScatteringParameters;
 uniform float m_KmESun;
 uniform float m_InnerRadius;
 uniform float m_RadiusScale;
@@ -39,23 +38,6 @@ float scale(float fCos)
 
 void calculateGroundInAtmosphere( in vec3 direction, in float distance, in float elevation, out vec3 rColor, out vec3 mColor ) {
 
-    /*    
-        groundParameters.m00 = innerRadius;
-        groundParameters.m01 = 1 / (outerRadius - innerRadius);
-        groundParameters.m02 = innerRadius / planetRadius;
-
-        groundParameters.m10 = invPow4WavelengthsKrESun.x; 
-        groundParameters.m11 = invPow4WavelengthsKrESun.y; 
-        groundParameters.m12 = invPow4WavelengthsKrESun.z;
-        groundParameters.m13 = scatteringConstants.z * lightIntensity;  // KmESun        
-    */
-
-    // Setup some relative constants and useful aliases
-    //float innerRadius = m_ScatteringParameters[0][0];
-    //float radiusScale = m_ScatteringParameters[0][1];
-    //vec3 invWavelengthsKrESun = m_ScatteringParameters[1].xyz;      
-    //float mESun = m_ScatteringParameters[1][3];
- 
     float scaleDepth = m_AverageDensityScale;  
     float scaleOverScaleDepth = m_InvAverageDensityHeight;
      
