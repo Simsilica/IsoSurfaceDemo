@@ -1,0 +1,13 @@
+
+
+uniform float m_Exposure;
+
+varying vec4 vColor;
+varying vec4 vColor2; 
+
+
+vec4 calculateGroundColor( vec4 color ) {
+    return (vColor + color * vColor2) * m_Exposure;             
+}
+
+
