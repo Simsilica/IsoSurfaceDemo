@@ -208,6 +208,11 @@ public class TerrainState extends BaseAppState {
         pager = new PagedGrid(rootFactory, builder, grid, yLayers, radius);        
         land.attachChild(pager.getGridRoot());
         
+
+        // A location I happen to know is a good starting point for this particular
+        // terrain fractal:
+        app.getCamera().setLocation(new Vector3f(-3.0589433f - 1, 19.916946f - 1, -19.72412f - 1));        
+
         
         // And finally, we need to have our camera movement go through the
         // pager instead of directly to the camera
