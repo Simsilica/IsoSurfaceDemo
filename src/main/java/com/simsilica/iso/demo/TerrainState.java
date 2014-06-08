@@ -34,8 +34,9 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.simsilica.iso;
+package com.simsilica.iso.demo;
 
+import com.google.common.base.Supplier;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
@@ -44,12 +45,17 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.simsilica.builder.Builder;
 import com.simsilica.builder.BuilderState;
-import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.iso.DensityVolume;
+import com.simsilica.iso.IsoTerrainZoneFactory;
+import com.simsilica.iso.MeshGenerator;
+import com.simsilica.iso.fractal.GemsFractalDensityVolume;
+import com.simsilica.iso.mc.MarchingCubesMeshGenerator;
+import com.simsilica.iso.volume.ResamplingVolume;
 import com.simsilica.lemur.event.BaseAppState;
 import com.simsilica.pager.Grid;
 import com.simsilica.pager.PagedGrid;
 import com.simsilica.pager.ZoneFactory;
-import com.simsilica.pager.debug.BBoxZone;
+
 
 
 /**
@@ -62,8 +68,34 @@ public class TerrainState extends BaseAppState {
     public static final int CHUNK_SIZE_XZ = 64;
     public static final int CHUNK_SIZE_Y = 32;
     
+    /**
+     *  The root level terrain pager that constructs the land geometry
+     *  and has all of the other children that generate flora, debris,
+     *  etc.
+     */
     private PagedGrid pager;
+    
+    /**
+     *  A convenient root node for wholesale removing or adding     
+     *  the terrain to the scene.
+     */
     private Node land;
+
+    /**
+     *  The density volume representing the world terrain.
+     */
+    private DensityVolume worldVolume;
+
+    /**
+     *  Materials that are based on world space can use
+     *  this to determine what the _actual_ world space is rather than
+     *  the current camera-centric view.
+     */
+    private Vector3f worldOffset = new Vector3f();
+
+    public TerrainState() {
+        this.worldVolume = new GemsFractalDensityVolume();
+    }
 
     @Override
     protected void initialize( Application app ) {
@@ -89,7 +121,7 @@ public class TerrainState extends BaseAppState {
         // end up with a 128x128 meter grid with 2 meter sampling.
         // It's a small reduction in quality but a huge win in the
         // number of zones we can display at once.
-        float xzScale = 1;
+        final float xzScale = 1;
                 
         int xzSize = (int)(cx * xzScale);
         
@@ -118,10 +150,61 @@ public class TerrainState extends BaseAppState {
 
         // For the moment, we will create just a bounding box zone
         // factory to test that the paging grid is working.           
-        Material boxMaterial = GuiGlobals.getInstance().createMaterial(ColorRGBA.Red, false).getMaterial();
-        boxMaterial.getAdditionalRenderState().setWireframe(true);
-        ZoneFactory rootFactory = new BBoxZone.Factory(boxMaterial);
+        //Material boxMaterial = GuiGlobals.getInstance().createMaterial(ColorRGBA.Red, false).getMaterial();
+        //boxMaterial.getAdditionalRenderState().setWireframe(true);
+        //ZoneFactory rootFactory = new BBoxZone.Factory(boxMaterial);
         
+        // Create the factory that will generate the base terrain.  It carves
+        // out chunks of the world based on the values we've defined above.
+        //------------------------------------------------------------------
+        
+        // We will need a material
+        Material terrainMaterial = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        terrainMaterial.setColor("Diffuse", ColorRGBA.Green);
+        terrainMaterial.setColor("Ambient", ColorRGBA.Blue);
+        terrainMaterial.setBoolean("UseMaterialColors", true);
+ 
+        // A potentially resampled world volume if we are super-sampling
+        DensityVolume volume = worldVolume;
+        if( xzScale != 1 ) {
+            // We're going to stretch the land geometry so we'll also 
+            // stretch the sampling.  The terrain will be slightly less
+            // interesting because we're skipping samples and stretching,
+            // but we'll cover a lot more (ahem) ground for the same
+            // amount of work.       
+            volume = new ResamplingVolume(new Vector3f(xzScale, 1, xzScale), volume);
+        }                                             
+ 
+        // And a mesh generator.
+        // This may look a bit strange but the factory nicely takes a Guava Supplier
+        // object.  This could have been anything... a singleton, a factory, whatever.
+        // In our case, it will act as a sort of per-thread singleton.  We want to be
+        // able to flexibly create any size pool but the marching cubes mesh generator
+        // keeps some internal non-thread-safe book-keeping.
+        Supplier<MeshGenerator> generator = new Supplier<MeshGenerator>() {
+                private ThreadLocal<MarchingCubesMeshGenerator> generator = new ThreadLocal() {
+                        @Override 
+                        protected MarchingCubesMeshGenerator initialValue() {
+                            return new MarchingCubesMeshGenerator( CHUNK_SIZE_XZ, 
+                                                               CHUNK_SIZE_Y, 
+                                                               CHUNK_SIZE_XZ,
+                                                               xzScale );
+                        }                                                               
+                    };
+                
+                @Override
+                public MeshGenerator get() {
+                    return generator.get();
+                }
+            };                
+        
+        // And finally the factory
+        ZoneFactory rootFactory = new IsoTerrainZoneFactory(volume, 
+                                                            new Vector3f(cx, cy, cz),
+                                                            new Vector3f(0, yBase, 0),
+                                                            generator,
+                                                            terrainMaterial);
+                
         pager = new PagedGrid(rootFactory, builder, grid, yLayers, radius);        
         land.attachChild(pager.getGridRoot());
         
@@ -130,10 +213,10 @@ public class TerrainState extends BaseAppState {
         // pager instead of directly to the camera
         getState(MovementState.class).setMovementHandler(
                 new PagedGridMovementHandler(pager, app.getCamera()) {
-                    @Override
+                    @Override 
                     protected void setLandLocation( float x, float z ) {
                         super.setLandLocation(x, z);
-                        //worldOffset.set(x, 0, z);
+                        worldOffset.set(x, 0, z);
                     }
                 });
                                  

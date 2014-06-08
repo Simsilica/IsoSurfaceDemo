@@ -34,7 +34,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.simsilica.iso;
+package com.simsilica.iso.demo;
 
 import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.SimpleApplication;
@@ -94,7 +94,7 @@ public class Main extends SimpleApplication {
     public Main() {
         super(new StatsAppState(), new DebugKeysAppState(),
               new SettingsPanelState(),
-              new BuilderState(1, 1),
+              new BuilderState(4, 1),
               new MovementState(),
               new LightingState(),
               new SkyState(),

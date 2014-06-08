@@ -34,7 +34,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.simsilica.iso;
+package com.simsilica.iso.demo;
 
 import com.jme3.input.KeyInput;
 import com.simsilica.lemur.input.Axis;

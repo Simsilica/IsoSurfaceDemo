@@ -34,27 +34,22 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.simsilica.iso;
+package com.simsilica.iso.demo;
 
-import com.jme3.input.KeyInput;
-import com.simsilica.lemur.input.FunctionId;
-import com.simsilica.lemur.input.InputMapper;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 
 
 /**
- *  Defines some global application input functions.
+ *  Called by the MovementState to do the actual movement.
  *
  *  @author    Paul Speed
  */
-public class MainFunctions {
+public interface MovementHandler {
 
-    public static final String GROUP = "Main";
-
-    public static final FunctionId F_TOGGLE_MOVEMENT = new FunctionId(GROUP, "Toggle Movement");
-    public static final FunctionId F_HUD = new FunctionId(GROUP, "HUD Toggle");
-
-    public static void initializeDefaultMappings( InputMapper inputMapper ) {
-        inputMapper.map( F_TOGGLE_MOVEMENT, KeyInput.KEY_SPACE );
-        inputMapper.map( F_HUD, KeyInput.KEY_F3 );
-    }
+    public void setLocation( Vector3f loc );
+    public Vector3f getLocation();
+    
+    public void setFacing( Quaternion facing );
+    public Quaternion getFacing();
 }
