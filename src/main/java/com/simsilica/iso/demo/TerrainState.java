@@ -39,10 +39,13 @@ package com.simsilica.iso.demo;
 import com.google.common.base.Supplier;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.WrapMode;
 import com.simsilica.builder.Builder;
 import com.simsilica.builder.BuilderState;
 import com.simsilica.iso.DensityVolume;
@@ -159,10 +162,7 @@ public class TerrainState extends BaseAppState {
         //------------------------------------------------------------------
         
         // We will need a material
-        Material terrainMaterial = new Material(app.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
-        terrainMaterial.setColor("Diffuse", ColorRGBA.Green);
-        terrainMaterial.setColor("Ambient", ColorRGBA.Blue);
-        terrainMaterial.setBoolean("UseMaterialColors", true);
+        Material terrainMaterial = createTerrainMaterial(app.getAssetManager());
  
         // A potentially resampled world volume if we are super-sampling
         DensityVolume volume = worldVolume;
@@ -240,6 +240,76 @@ public class TerrainState extends BaseAppState {
     protected void disable() {
         land.removeFromParent();
     }
+    
+    protected Material createTerrainMaterial( AssetManager assets ) {
+        Material terrainMaterial = new Material(assets, "MatDefs/TrilinearLighting.j3md");
+        terrainMaterial.setFloat("Shininess", 0);
+ 
+        terrainMaterial.setColor("Diffuse", ColorRGBA.White);
+        terrainMaterial.setColor("Ambient", ColorRGBA.White);
+        terrainMaterial.setBoolean("UseMaterialColors", true);
+
+        
+        terrainMaterial.setVector3("WorldOffset", worldOffset);
+ 
+        // Setup the trilinear textures for the different axis,
+        // X, Y, and Z.  We use the regular diffuse map for the top
+        // texture.
+        Texture texture;
+ 
+        texture = assets.loadTexture("Textures/grass.jpg");
+        texture.setWrap(Texture.WrapMode.Repeat);
+        terrainMaterial.setTexture("DiffuseMap", texture);  
+
+        texture = assets.loadTexture("Textures/grass-flat.jpg");
+        texture.setWrap(Texture.WrapMode.Repeat);
+        terrainMaterial.setTexture("DiffuseMapLow", texture);  
+        
+        texture = assets.loadTexture("Textures/brown-dirt-norm.jpg");
+        texture.setWrap(WrapMode.Repeat);
+        terrainMaterial.setTexture("NormalMap", texture);        
+ 
+ 
+        
+        texture = assets.loadTexture("Textures/brown-dirt2.jpg");
+        texture.setWrap(WrapMode.Repeat);
+        terrainMaterial.setTexture("DiffuseMapX", texture);
+        
+        //texture = assets.loadTexture("Textures/test-norm.png");
+        texture = assets.loadTexture("Textures/brown-dirt-norm.jpg");
+        texture.setWrap(WrapMode.Repeat);
+        terrainMaterial.setTexture("NormalMapX", texture);
+
+        texture = assets.loadTexture("Textures/brown-dirt2.jpg");
+        texture.setWrap(WrapMode.Repeat);
+        terrainMaterial.setTexture("DiffuseMapZ", texture);
+        
+        //texture = assets.loadTexture("Textures/test-norm.png");
+        texture = assets.loadTexture("Textures/brown-dirt-norm.jpg");
+        texture.setWrap(WrapMode.Repeat);
+        terrainMaterial.setTexture("NormalMapZ", texture);
+ 
+        // Now the default down texture... we use a separate one
+        // and DiffuseMap will be used for the top 
+        texture = assets.loadTexture("Textures/canvas128.jpg");
+        texture.setWrap(WrapMode.Repeat);
+        terrainMaterial.setTexture("DiffuseMapY", texture);
+        
+        //texture = assets.loadTexture("Textures/test-norm.png");
+        texture = assets.loadTexture("Textures/brown-dirt-norm.jpg");
+        texture.setWrap(WrapMode.Repeat);
+        terrainMaterial.setTexture("NormalMapY", texture);
+ 
+        // We will need a noise texture soon, might as well set it
+        // now
+        texture = assets.loadTexture("Textures/noise-x3-512.png");
+        texture.setWrap(WrapMode.Repeat);
+        terrainMaterial.setTexture("Noise", texture);        
+ 
+        
+        return terrainMaterial;   
+    }
 }
+
 
 

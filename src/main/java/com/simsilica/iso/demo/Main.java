@@ -114,7 +114,7 @@ public class Main extends SimpleApplication {
         inputMapper.activateGroup(MainFunctions.GROUP);        
         MovementFunctions.initializeDefaultMappings(inputMapper);
 
-        ///*
+        /*
         // Now create the normal simple test scene    
         Box b = new Box(1, 1, 1);
         Geometry geom = new Geometry("Box", b);
@@ -126,7 +126,7 @@ public class Main extends SimpleApplication {
         geom.setMaterial(mat);
 
         rootNode.attachChild(geom);
-        //*/ 
+        */ 
 
         BaseStyles.loadGlassStyle();
         

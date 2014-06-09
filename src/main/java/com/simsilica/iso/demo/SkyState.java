@@ -74,12 +74,12 @@ public class SkyState extends BaseAppState {
     
     private boolean flat = false;
  
-private Node ground; 
+//private Node ground; 
     
     private Material flatMaterial;
     private Material atmosphericMaterial;
-private Material groundMaterial;    
-private Material flatGroundMaterial;    
+//private Material groundMaterial;    
+//private Material flatGroundMaterial;    
     
     private AtmosphericMaterialParameters atmosphericParms;
     
@@ -119,10 +119,10 @@ private Material flatGroundMaterial;
     protected void resetMaterials() {
         if( flat ) {
             sky.setMaterial(flatMaterial);
-            ground.setMaterial(flatGroundMaterial);
+            //ground.setMaterial(flatGroundMaterial);
         } else {
             sky.setMaterial(atmosphericMaterial);
-            ground.setMaterial(groundMaterial);
+            //ground.setMaterial(groundMaterial);
         }
     }
     
@@ -143,7 +143,7 @@ private Material flatGroundMaterial;
 
     public void setMieConstant( float f ) {
         atmosphericParms.setMieConstant(f / 100);
-        atmosphericParms.applyGroundParameters(groundMaterial);    
+        //atmosphericParms.applyGroundParameters(groundMaterial);    
         rayleighAndMie.z = f / 100;
     }
     
@@ -153,7 +153,7 @@ private Material flatGroundMaterial;
     
     public void setRayleighConstant( float f ) {
         atmosphericParms.setRayleighConstant(f / 100);
-        atmosphericParms.applyGroundParameters(groundMaterial);    
+        //atmosphericParms.applyGroundParameters(groundMaterial);    
         rayleighAndMie.x = f / 100;
     }
     
@@ -164,7 +164,7 @@ private Material flatGroundMaterial;
     public void setLightIntensity( float f ) {
         this.lightIntensity = f;
         atmosphericParms.setLightIntensity(f);
-        atmosphericParms.applyGroundParameters(groundMaterial);    
+        //atmosphericParms.applyGroundParameters(groundMaterial);    
     }
     
     public float getLightIntensity() {
@@ -173,7 +173,7 @@ private Material flatGroundMaterial;
     
     public void setRedWavelength( float f ) {
         atmosphericParms.setRedWavelength(f);
-        atmosphericParms.applyGroundParameters(groundMaterial);            
+        //atmosphericParms.applyGroundParameters(groundMaterial);            
     }
     
     public float getRedWavelength() {
@@ -182,7 +182,7 @@ private Material flatGroundMaterial;
 
     public void setGreenWavelength( float f ) {
         atmosphericParms.setGreenWavelength(f);
-        atmosphericParms.applyGroundParameters(groundMaterial);            
+        //atmosphericParms.applyGroundParameters(groundMaterial);            
     }
 
     public float getGreenWavelength() {
@@ -191,7 +191,7 @@ private Material flatGroundMaterial;
     
     public void setBlueWavelength( float f ) {
         atmosphericParms.setBlueWavelength(f);
-        atmosphericParms.applyGroundParameters(groundMaterial);            
+        //atmosphericParms.applyGroundParameters(groundMaterial);            
     }
 
     public float getBlueWavelength() {
@@ -200,7 +200,7 @@ private Material flatGroundMaterial;
 
     public void setMiePhaseAsymmetryFactor( float f ) {
         atmosphericParms.setMiePhaseAsymmetryFactor(f);
-        atmosphericParms.applyGroundParameters(groundMaterial);    
+        //atmosphericParms.applyGroundParameters(groundMaterial);    
         this.mpaFactor = f;
     }
     
@@ -210,7 +210,7 @@ private Material flatGroundMaterial;
 
     public void setRayleighScaleDepth( float f ) {
         atmosphericParms.setAverageDensityScale(f);
-        atmosphericParms.applyGroundParameters(groundMaterial);    
+        //atmosphericParms.applyGroundParameters(groundMaterial);    
         this.rayleighScale = f;
     }
 
@@ -230,7 +230,7 @@ private Material flatGroundMaterial;
     public void setExposure( float f ) {
         atmosphericParms.setSkyExposure(f);
         atmosphericParms.setGroundExposure(f);
-        atmosphericParms.applyGroundParameters(groundMaterial);    
+        //atmosphericParms.applyGroundParameters(groundMaterial);    
         this.exposure = f;
     }
     
@@ -275,6 +275,7 @@ System.out.println( "planetScale:" + planetScale + "  dome inner:" + (inner/plan
         cam.setLocation(new Vector3f(0, 1, 0));
 
 
+        /*
         // Make a temporary ground 
         ground = new Node("ground");
         MBox box = new MBox(outer/planetScale, 0, outer/planetScale, 50, 0, 50);
@@ -301,6 +302,7 @@ System.out.println( "planetScale:" + planetScale + "  dome inner:" + (inner/plan
         }
                 
         ground.setMaterial(mat);
+        */
         
         //TruncatedDome skyDome = new TruncatedDome(inner/planetScale, outer/planetScale, 100, 50, true);
         TruncatedDome skyDome = new TruncatedDome(domeInnerRadius, domeOuterRadius, 100, 50, true);
@@ -350,11 +352,11 @@ System.out.println( "waveLength:" + waveLength );
         mieScale = 0.1f;
 System.out.println( "Sky Material:" + m.getParams() );                
         
-        groundMaterial = new Material(app.getAssetManager(), "MatDefs/GroundAtmospherics.j3md");
-        ground.setMaterial(groundMaterial); 
-        m = groundMaterial;
+        //groundMaterial = new Material(app.getAssetManager(), "MatDefs/GroundAtmospherics.j3md");
+        //ground.setMaterial(groundMaterial); 
+        //m = groundMaterial;
         
-        atmosphericParms.applyGroundParameters(groundMaterial);
+        //atmosphericParms.applyGroundParameters(groundMaterial);
         
         resetShowSky();
         
@@ -387,7 +389,7 @@ System.out.println( "Sky Material:" + m.getParams() );
         Node rootNode = ((SimpleApplication)getApplication()).getRootNode();
         rootNode.attachChild(sun);
         rootNode.attachChild(sky);
-rootNode.attachChild(ground);
+//rootNode.attachChild(ground);
         
         //Node guiNode = ((SimpleApplication)getApplication()).getGuiNode();
         //guiNode.attachChild(settings);
@@ -398,7 +400,7 @@ rootNode.attachChild(ground);
         if( lightDir.update() ) {
             sun.setLocalTranslation(lightDir.get().mult(-900));
             atmosphericParms.setLightDirection(lightDir.get());
-            atmosphericParms.applyGroundParameters(groundMaterial);
+            //atmosphericParms.applyGroundParameters(groundMaterial);
         }
         
         if( flat ) {
@@ -410,7 +412,7 @@ rootNode.attachChild(ground);
     protected void disable() {
         sun.removeFromParent();
         sky.removeFromParent();
-ground.removeFromParent();        
+//ground.removeFromParent();        
         //settings.removeFromParent();
     }
 }
