@@ -142,23 +142,23 @@ public class SkyState extends BaseAppState {
     }
 
     public void setMieConstant( float f ) {
-        atmosphericParms.setMieConstant(f / 100);
+        atmosphericParms.setMieConstant(f / 10);
         //atmosphericParms.applyGroundParameters(groundMaterial);    
-        rayleighAndMie.z = f / 100;
+        rayleighAndMie.z = f / 10;
     }
     
     public float getMieConstant() {
-        return rayleighAndMie.z * 100;
+        return rayleighAndMie.z * 10;
     }
     
     public void setRayleighConstant( float f ) {
-        atmosphericParms.setRayleighConstant(f / 100);
+        atmosphericParms.setRayleighConstant(f / 10);
         //atmosphericParms.applyGroundParameters(groundMaterial);    
-        rayleighAndMie.x = f / 100;
+        rayleighAndMie.x = f / 10;
     }
     
     public float getRayleighConstant() {
-        return rayleighAndMie.x * 100;
+        return rayleighAndMie.x * 10;
     }
     
     public void setLightIntensity( float f ) {
@@ -360,8 +360,8 @@ System.out.println( "Sky Material:" + m.getParams() );
  
         // Setup some defaults we like:
         setExposure(1.5f);
-        setRayleighConstant(0.34f);
-        setMieConstant(1);
+        setRayleighConstant(0.034f);
+        setMieConstant(0.1f);
         setMiePhaseAsymmetryFactor(-0.999f);
  
         getState(LightingState.class).setTimeOfDay(0.060f);
@@ -374,9 +374,9 @@ System.out.println( "Sky Material:" + m.getParams() );
         settings = new PropertyPanel("glass");
         settings.addFloatProperty("Intensity", this, "lightIntensity", 0, 100, 1);
         settings.addFloatProperty("Exposure", this, "exposure", 0, 10, 0.1f);
-        settings.addFloatProperty("Rayleigh Constant(x100)", this, "rayleighConstant", 0, 1, 0.01f);
-        settings.addFloatProperty("Rayleigh Scale", this, "rayleighScaleDepth", 0, 1, 0.001f);
-        settings.addFloatProperty("Mie Constant(x100)", this, "mieConstant", 0, 1, 0.01f);
+        settings.addFloatProperty("Rayleigh Constant(x10)", this, "rayleighConstant", 0, 1, 0.001f);
+        settings.addFloatProperty("Scale Depth", this, "rayleighScaleDepth", 0, 1, 0.001f);
+        settings.addFloatProperty("Mie Constant(x10)", this, "mieConstant", 0, 1, 0.001f);
         settings.addFloatProperty("MPA Factor", this, "miePhaseAsymmetryFactor", -1.5f, 0, 0.001f);
         settings.addFloatProperty("Flattening", this, "flattening", 0, 1, 0.01f);
         settings.addFloatProperty("Red Wavelength (nm)", this, "redWavelength", 0, 1, 0.001f);
