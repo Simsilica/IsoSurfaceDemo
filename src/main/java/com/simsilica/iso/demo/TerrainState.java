@@ -41,6 +41,7 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -53,6 +54,8 @@ import com.simsilica.iso.IsoTerrainZoneFactory;
 import com.simsilica.iso.MeshGenerator;
 import com.simsilica.iso.fractal.GemsFractalDensityVolume;
 import com.simsilica.iso.mc.MarchingCubesMeshGenerator;
+import com.simsilica.iso.plot.GrassZone;
+import com.simsilica.iso.util.BilinearArray;
 import com.simsilica.iso.volume.ResamplingVolume;
 import com.simsilica.lemur.event.BaseAppState;
 import com.simsilica.pager.Grid;
@@ -95,6 +98,14 @@ public class TerrainState extends BaseAppState {
      *  the current camera-centric view.
      */
     private Vector3f worldOffset = new Vector3f();
+
+    /**
+     *  The root level grid model from which all children will
+     *  derive.  (Children must be the same spacing or an even
+     *  subspacing, ie: only one parent per child.)
+     */
+    private Grid rootGrid;
+     
 
     public TerrainState() {
         this.worldVolume = new GemsFractalDensityVolume();
@@ -149,7 +160,7 @@ public class TerrainState extends BaseAppState {
         // Now we have enough to create our grid model.
         // The first parameter is the grid spacing in x,y,z.  The second one
         // is the grid offset. 
-        Grid grid = new Grid(new Vector3f(xzSize, cy, xzSize), new Vector3f(0, yBase, 0));
+        rootGrid = new Grid(new Vector3f(xzSize, cy, xzSize), new Vector3f(0, yBase, 0));
 
         // For the moment, we will create just a bounding box zone
         // factory to test that the paging grid is working.           
@@ -205,9 +216,30 @@ public class TerrainState extends BaseAppState {
                                                             generator,
                                                             terrainMaterial);
                 
-        pager = new PagedGrid(rootFactory, builder, grid, yLayers, radius);        
+        pager = new PagedGrid(rootFactory, builder, rootGrid, yLayers, radius);        
         land.attachChild(pager.getGridRoot());
         
+
+        // Create the Grass pager
+        //---------------------------
+        Material grassMaterial = createGrassMaterial(app.getAssetManager());
+ 
+        // Grass uses the same noise texture that the shader uses to plot
+        // borders, etc.
+        BilinearArray noise = BilinearArray.fromTexture(app.getAssetManager().loadTexture("Textures/noise-x3-512.png"));        
+ 
+        Grid grassGrid = new Grid(new Vector3f(32, 32, 32), new Vector3f(0, (yBase + 32), 0));  
+        ZoneFactory grassFactory = new GrassZone.Factory(grassMaterial, noise);
+        
+        int grassDistance = 64;
+        grassMaterial.setFloat("DistanceFalloff", grassDistance + 16);      
+        
+        PagedGrid grassPager = new PagedGrid(pager, grassFactory, builder, grassGrid, 2, grassDistance / 32);
+        grassPager.setPriorityBias(2);
+        land.attachChild(grassPager.getGridRoot()); 
+
+
+
 
         // A location I happen to know is a good starting point for this particular
         // terrain fractal:
@@ -308,6 +340,21 @@ public class TerrainState extends BaseAppState {
  
         
         return terrainMaterial;   
+    }
+    
+    protected Material createGrassMaterial( AssetManager assets ) {
+    
+        Texture grassTexture = assets.loadTexture("Textures/grass-blades.png");
+        Material grassMaterial = new Material(assets, "MatDefs/Grass.j3md");
+        grassMaterial.setTexture("DiffuseMap", grassTexture);
+        grassMaterial.setFloat("AlphaDiscardThreshold", 0.25f);
+        grassMaterial.setColor("Diffuse", ColorRGBA.White); //color);
+        grassMaterial.setColor("Specular", ColorRGBA.Red); //color);
+        grassMaterial.setColor("Ambient", ColorRGBA.White);
+        grassMaterial.setFloat("Shininess", 0);
+        grassMaterial.setBoolean("UseMaterialColors", true);        
+        grassMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+        return grassMaterial;        
     }
 }
 
