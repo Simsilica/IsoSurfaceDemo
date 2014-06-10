@@ -328,7 +328,8 @@ public class AtmosphericMaterialParameters {
         wavelengthsPow4.z = FastMath.pow(wavelengths.z, 4);
         invPow4Wavelengths.x = 1 / wavelengthsPow4.x;
         invPow4Wavelengths.y = 1 / wavelengthsPow4.y;
-        invPow4Wavelengths.z = 1 / wavelengthsPow4.z;               
+        invPow4Wavelengths.z = 1 / wavelengthsPow4.z;
+        updateMaterials();               
     }
     
     public void setRedWavelength( float f ) {

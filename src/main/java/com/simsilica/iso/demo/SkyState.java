@@ -357,6 +357,17 @@ System.out.println( "Sky Material:" + m.getParams() );
         //m = groundMaterial;
         
         //atmosphericParms.applyGroundParameters(groundMaterial);
+ 
+        // Setup some defaults we like:
+        setExposure(1.5f);
+        setRayleighConstant(0.34f);
+        setMieConstant(1);
+        setMiePhaseAsymmetryFactor(-0.999f);
+ 
+        getState(LightingState.class).setTimeOfDay(0.060f);
+        getState(LightingState.class).setOrientation(0.951f);
+ 
+ 
         
         resetShowSky();
         
@@ -373,6 +384,7 @@ System.out.println( "Sky Material:" + m.getParams() );
         settings.addFloatProperty("Blue Wavelength (nm)", this, "blueWavelength", 0, 1, 0.001f);
 
         settings.addFloatProperty("Time", getState(LightingState.class), "timeOfDay", -0.1f, 1.1f, 0.01f);
+        settings.addFloatProperty("Orientation", getState(LightingState.class), "orientation", 0f, FastMath.TWO_PI, 0.01f);
         settings.setLocalTranslation(0, cam.getHeight(), 0);
         
         settings.addBooleanProperty("Flat Shaded", this, "flatShaded");

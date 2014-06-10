@@ -66,7 +66,8 @@ public class LightingState extends BaseAppState {
     private ColorRGBA ambientColor;
     private AmbientLight ambient;
     private float timeOfDay = FastMath.atan2(1, 0.3f) / FastMath.PI;    
-    private float inclination = FastMath.HALF_PI - FastMath.atan2(1, 0.4f); 
+    private float inclination = FastMath.HALF_PI - FastMath.atan2(1, 0.4f);
+    private float orientation = FastMath.HALF_PI; 
     
     private Node rootNode;  // the one we added the lights to
     
@@ -95,12 +96,24 @@ public class LightingState extends BaseAppState {
     public float getTimeOfDay() {
         return timeOfDay;
     }
+
+    public void setOrientation( float f ) {
+        if( this.orientation == f ) {
+            return;
+        }
+        this.orientation = f;
+        resetLightDir();        
+    }
+    
+    public float getOrientation() {
+        return orientation;
+    }
  
     protected void resetLightDir() {
         float angle = timeOfDay * FastMath.PI;
  
         Quaternion q1 = new Quaternion().fromAngles(0, 0, (angle - FastMath.HALF_PI));
-        Quaternion q2 = new Quaternion().fromAngles(inclination, 0, 0);
+        Quaternion q2 = new Quaternion().fromAngles(inclination, orientation, 0);
         Vector3f dir = q2.mult(q1).mult(Vector3f.UNIT_Y.negate());
         lightDir.setObject(dir);
         sun.setDirection(lightDir.getObject());
