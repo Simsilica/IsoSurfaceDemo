@@ -399,7 +399,7 @@ System.out.println( "Sky Material:" + m.getParams() );
     @Override
     protected void enable() {
         Node rootNode = ((SimpleApplication)getApplication()).getRootNode();
-        rootNode.attachChild(sun);
+        //rootNode.attachChild(sun);
         rootNode.attachChild(sky);
 //rootNode.attachChild(ground);
         
@@ -422,7 +422,7 @@ System.out.println( "Sky Material:" + m.getParams() );
 
     @Override
     protected void disable() {
-        sun.removeFromParent();
+        //sun.removeFromParent();
         sky.removeFromParent();
 //ground.removeFromParent();        
         //settings.removeFromParent();
