@@ -100,6 +100,7 @@ public class Main extends SimpleApplication {
               new SkyState(),
               new CameraState(70, 0.1f, 1000),
               new TerrainState(),
+              new MaterialSettingsState(),
               new DebugHudState(),
               new ScreenshotAppState("", System.currentTimeMillis())); 
     }

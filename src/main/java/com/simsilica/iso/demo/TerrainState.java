@@ -106,6 +106,8 @@ public class TerrainState extends BaseAppState {
      */
     private Grid rootGrid;
      
+    private Material terrainMaterial;
+    private Material grassMaterial;
 
     public TerrainState() {
         this.worldVolume = new GemsFractalDensityVolume();
@@ -173,7 +175,7 @@ public class TerrainState extends BaseAppState {
         //------------------------------------------------------------------
         
         // We will need a material
-        Material terrainMaterial = createTerrainMaterial(app.getAssetManager());
+        Material terrainMaterial = getTerrainMaterial();
  
         // A potentially resampled world volume if we are super-sampling
         DensityVolume volume = worldVolume;
@@ -222,7 +224,7 @@ public class TerrainState extends BaseAppState {
 
         // Create the Grass pager
         //---------------------------
-        Material grassMaterial = createGrassMaterial(app.getAssetManager());
+        Material grassMaterial = getGrassMaterial();
  
         // Grass uses the same noise texture that the shader uses to plot
         // borders, etc.
@@ -273,8 +275,14 @@ public class TerrainState extends BaseAppState {
         land.removeFromParent();
     }
     
-    protected Material createTerrainMaterial( AssetManager assets ) {
-        Material terrainMaterial = new Material(assets, "MatDefs/TrilinearLighting.j3md");
+    public Material getTerrainMaterial() {
+        if( terrainMaterial != null ) {
+            return terrainMaterial;
+        }
+    
+        AssetManager assets = getApplication().getAssetManager();
+               
+        terrainMaterial = new Material(assets, "MatDefs/TrilinearLighting.j3md");
         terrainMaterial.setFloat("Shininess", 0);
  
         terrainMaterial.setColor("Diffuse", ColorRGBA.White);
@@ -342,17 +350,30 @@ public class TerrainState extends BaseAppState {
         return terrainMaterial;   
     }
     
-    protected Material createGrassMaterial( AssetManager assets ) {
-    
+    public Material getGrassMaterial() {
+ 
+        if( grassMaterial != null ) {
+            return grassMaterial;
+        }
+           
+        AssetManager assets = getApplication().getAssetManager();
+        
         Texture grassTexture = assets.loadTexture("Textures/grass-blades.png");
-        Material grassMaterial = new Material(assets, "MatDefs/Grass.j3md");
+        grassMaterial = new Material(assets, "MatDefs/Grass.j3md");
         grassMaterial.setTexture("DiffuseMap", grassTexture);
         grassMaterial.setFloat("AlphaDiscardThreshold", 0.25f);
         grassMaterial.setColor("Diffuse", ColorRGBA.White); //color);
         grassMaterial.setColor("Specular", ColorRGBA.Red); //color);
         grassMaterial.setColor("Ambient", ColorRGBA.White);
         grassMaterial.setFloat("Shininess", 0);
-        grassMaterial.setBoolean("UseMaterialColors", true);        
+        grassMaterial.setBoolean("UseMaterialColors", true);
+        
+        Texture texture = assets.loadTexture("Textures/noise-x3-512.png");
+        texture.setWrap(WrapMode.Repeat);
+        grassMaterial.setTexture("Noise", texture);        
+
+        grassMaterial.setVector3("WorldOffset", worldOffset);
+                
         grassMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         return grassMaterial;        
     }
