@@ -55,8 +55,11 @@ import com.simsilica.iso.MeshGenerator;
 import com.simsilica.iso.fractal.GemsFractalDensityVolume;
 import com.simsilica.iso.mc.MarchingCubesMeshGenerator;
 import com.simsilica.iso.plot.GrassZone;
+import com.simsilica.iso.plot.PlotFrequencyZone;
+import com.simsilica.iso.plot.TreeZone;
 import com.simsilica.iso.util.BilinearArray;
 import com.simsilica.iso.volume.ResamplingVolume;
+import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.event.BaseAppState;
 import com.simsilica.pager.Grid;
 import com.simsilica.pager.PagedGrid;
@@ -216,32 +219,70 @@ public class TerrainState extends BaseAppState {
                                                             new Vector3f(cx, cy, cz),
                                                             new Vector3f(0, yBase, 0),
                                                             generator,
-                                                            terrainMaterial);
+                                                            terrainMaterial,
+                                                            false);
                 
         pager = new PagedGrid(rootFactory, builder, rootGrid, yLayers, radius);        
         land.attachChild(pager.getGridRoot());
         
-
-        // Create the Grass pager
-        //---------------------------
-        Material grassMaterial = getGrassMaterial();
+        boolean grass = true;
+        if( grass ) {
+            // Create the Grass pager
+            //---------------------------
+            Material grassMaterial = getGrassMaterial();
  
-        // Grass uses the same noise texture that the shader uses to plot
-        // borders, etc.
-        BilinearArray noise = BilinearArray.fromTexture(app.getAssetManager().loadTexture("Textures/noise-x3-512.png"));        
+            // Grass uses the same noise texture that the shader uses to plot
+            // borders, etc.
+            BilinearArray noise = BilinearArray.fromTexture(app.getAssetManager().loadTexture("Textures/noise-x3-512.png"));        
  
-        Grid grassGrid = new Grid(new Vector3f(32, 32, 32), new Vector3f(0, (yBase + 32), 0));  
-        ZoneFactory grassFactory = new GrassZone.Factory(grassMaterial, noise);
+            Grid grassGrid = new Grid(new Vector3f(32, 32, 32), new Vector3f(0, (yBase + 32), 0));  
+            ZoneFactory grassFactory = new GrassZone.Factory(grassMaterial, noise);
         
-        int grassDistance = 64;
-        grassMaterial.setFloat("DistanceFalloff", grassDistance + 16);      
+            int grassDistance = 64;
+            grassMaterial.setFloat("DistanceFalloff", grassDistance + 16);      
         
-        PagedGrid grassPager = new PagedGrid(pager, grassFactory, builder, grassGrid, 2, grassDistance / 32);
-        grassPager.setPriorityBias(2);
-        land.attachChild(grassPager.getGridRoot()); 
+            PagedGrid grassPager = new PagedGrid(pager, grassFactory, builder, grassGrid, 2, grassDistance / 32);
+            grassPager.setPriorityBias(2);
+            land.attachChild(grassPager.getGridRoot());
+        } 
 
+        boolean freqPlot = false;
+        if( freqPlot ) {
+            // Testing some plotting frequencies
+            Material plotMaterial = GuiGlobals.getInstance().createMaterial(ColorRGBA.White, false).getMaterial();
+            plotMaterial.getAdditionalRenderState().setWireframe(true);
+            plotMaterial.setBoolean("VertexColor", true);
+        
+            BilinearArray noise = BilinearArray.fromTexture(app.getAssetManager().loadTexture("Textures/noise-x3-512.png"));        
+    
+            Grid plotGrid = new Grid(new Vector3f(32, 32, 32), new Vector3f(0, (yBase + 32), 0));  
+            ZoneFactory plotFactory = new PlotFrequencyZone.Factory(plotMaterial, noise);
+            
+            int plotDistance = 32; //64;
+            PagedGrid plotPager = new PagedGrid(pager, plotFactory, builder, plotGrid, 2, plotDistance / 32);
+            plotPager.setPriorityBias(1);
+            land.attachChild(plotPager.getGridRoot());
+        } 
 
-
+        boolean trees = true;
+        if( trees ) {
+            
+            Node tree1 = (Node)app.getAssetManager().loadModel("Models/short-tree1-full-LOD.j3o");
+        
+            Material treeMaterial = GuiGlobals.getInstance().createMaterial(ColorRGBA.White, false).getMaterial();
+            treeMaterial.getAdditionalRenderState().setWireframe(true);
+            treeMaterial.setBoolean("VertexColor", true);
+        
+            BilinearArray noise = BilinearArray.fromTexture(app.getAssetManager().loadTexture("Textures/noise-x3-512.png"));        
+    
+            Grid treeGrid = new Grid(new Vector3f(32, 32, 32), new Vector3f(0, (yBase + 32), 0));  
+            ZoneFactory treeFactory = new TreeZone.Factory(treeMaterial, noise, tree1);
+            
+            int treeDistance = 32;
+            PagedGrid treePager = new PagedGrid(pager, treeFactory, builder, treeGrid, 2, treeDistance / 32);
+            //treePager.setPriorityBias(1);
+            land.attachChild(treePager.getGridRoot());
+        }
 
         // A location I happen to know is a good starting point for this particular
         // terrain fractal:
