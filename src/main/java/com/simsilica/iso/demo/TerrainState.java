@@ -268,6 +268,7 @@ public class TerrainState extends BaseAppState {
         if( trees ) {
             
             Node tree1 = (Node)app.getAssetManager().loadModel("Models/short-tree1-full-LOD.j3o");
+            Node tree2 = (Node)app.getAssetManager().loadModel("Models/tall-tree2-full-LOD.j3o");
         
             Material treeMaterial = GuiGlobals.getInstance().createMaterial(ColorRGBA.White, false).getMaterial();
             treeMaterial.getAdditionalRenderState().setWireframe(true);
@@ -276,7 +277,7 @@ public class TerrainState extends BaseAppState {
             BilinearArray noise = BilinearArray.fromTexture(app.getAssetManager().loadTexture("Textures/noise-x3-512.png"));        
     
             Grid treeGrid = new Grid(new Vector3f(32, 32, 32), new Vector3f(0, (yBase + 32), 0));  
-            ZoneFactory treeFactory = new TreeZone.Factory(treeMaterial, noise, tree1);
+            ZoneFactory treeFactory = new TreeZone.Factory(treeMaterial, noise, tree1, tree2);
             
             int treeDistance = 32;
             PagedGrid treePager = new PagedGrid(pager, treeFactory, builder, treeGrid, 2, treeDistance / 32);
