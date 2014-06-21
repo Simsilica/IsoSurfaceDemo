@@ -51,6 +51,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Sphere;
 import com.simsilica.fx.LightingState;
+import com.simsilica.fx.geom.TruncatedDome;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.event.BaseAppState;
@@ -62,7 +63,7 @@ import com.simsilica.lemur.props.PropertyPanel;
  *
  *  @author    Paul Speed
  */
-public class SkyState extends BaseAppState {
+public class OldSkyState extends BaseAppState {
 
     private ColorRGBA skyColor;
     private ColorRGBA sunColor;
@@ -92,7 +93,7 @@ public class SkyState extends BaseAppState {
     private float exposure;
     private PropertyPanel settings;
 
-    public SkyState() {
+    public OldSkyState() {
         this.sunColor = new ColorRGBA(1, 1, 0.9f, 1);
         this.skyColor = new ColorRGBA(0.5f, 0.5f, 1f, 1);
     }
