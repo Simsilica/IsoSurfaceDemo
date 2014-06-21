@@ -49,14 +49,12 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
-import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
+import com.simsilica.fx.LightingState;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.core.VersionedReference;
 import com.simsilica.lemur.event.BaseAppState;
-import com.simsilica.lemur.geom.MBox;
 import com.simsilica.lemur.props.PropertyPanel;
-import java.util.Random;
 
 
 /**

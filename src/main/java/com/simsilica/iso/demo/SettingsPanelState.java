@@ -38,6 +38,7 @@ package com.simsilica.iso.demo;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
+import com.simsilica.fx.sky.SkySettingsState;
 import com.simsilica.lemur.Container;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
@@ -89,6 +90,12 @@ public class SettingsPanelState extends BaseAppState {
         
         tabs = new TabbedPanel("glass");
         mainContents.addChild(tabs);
+        
+        // Hookup the settings UI for the sky... probably a better place
+        // for it.
+        SkySettingsState skySettings = getState(SkySettingsState.class);
+        getParameterTabs().addTab("Sky", skySettings.getSettings());                
+        
     }
 
     @Override

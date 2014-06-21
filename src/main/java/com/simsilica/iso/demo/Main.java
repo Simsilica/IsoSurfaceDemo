@@ -40,13 +40,12 @@ import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.app.state.ScreenshotAppState;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 import com.simsilica.builder.BuilderState;
+import com.simsilica.fx.LightingState;
+import com.simsilica.fx.sky.SkyState;
+import com.simsilica.fx.sky.SkySettingsState;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.input.InputMapper;
 import com.simsilica.lemur.style.BaseStyles;
@@ -93,11 +92,12 @@ public class Main extends SimpleApplication {
  
     public Main() {
         super(new StatsAppState(), new DebugKeysAppState(),
-              new SettingsPanelState(),
-              new BuilderState(4, 1),
-              new MovementState(),
               new LightingState(),
               new SkyState(),
+              new SkySettingsState(),
+              new SettingsPanelState(),
+              new BuilderState(4, 4),
+              new MovementState(),
               new CameraState(70, 0.1f, 1000),
               new TerrainState(),
               new MaterialSettingsState(),
@@ -115,6 +115,7 @@ public class Main extends SimpleApplication {
         MainFunctions.initializeDefaultMappings(inputMapper);
         inputMapper.activateGroup(MainFunctions.GROUP);        
         MovementFunctions.initializeDefaultMappings(inputMapper);
+
 
         /*
         // Now create the normal simple test scene    

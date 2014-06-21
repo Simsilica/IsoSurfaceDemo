@@ -64,6 +64,7 @@ import com.simsilica.lemur.event.BaseAppState;
 import com.simsilica.pager.Grid;
 import com.simsilica.pager.PagedGrid;
 import com.simsilica.pager.ZoneFactory;
+import com.simsilica.pager.debug.BBoxZone;
 
 
 
@@ -275,14 +276,27 @@ public class TerrainState extends BaseAppState {
             treeMaterial.setBoolean("VertexColor", true);
         
             BilinearArray noise = BilinearArray.fromTexture(app.getAssetManager().loadTexture("Textures/noise-x3-512.png"));        
-    
-            Grid treeGrid = new Grid(new Vector3f(32, 32, 32), new Vector3f(0, (yBase + 32), 0));  
+ 
+            int treeGridSpacing = 16;   
+            Grid treeGrid = new Grid(new Vector3f(treeGridSpacing, 32, treeGridSpacing), new Vector3f(0, (yBase + 32), 0));  
             ZoneFactory treeFactory = new TreeZone.Factory(treeMaterial, noise, tree1, tree2);
             
-            int treeDistance = 32;
-            PagedGrid treePager = new PagedGrid(pager, treeFactory, builder, treeGrid, 2, treeDistance / 32);
+            int treeDistance = 128;
+            PagedGrid treePager = new PagedGrid(pager, treeFactory, builder, treeGrid, 2, treeDistance / treeGridSpacing);
             //treePager.setPriorityBias(1);
             land.attachChild(treePager.getGridRoot());
+        }
+
+        boolean debugZone = false;
+        if( debugZone ) {
+            Material boxMaterial = GuiGlobals.getInstance().createMaterial(ColorRGBA.Red, false).getMaterial();
+            boxMaterial.getAdditionalRenderState().setWireframe(true);            
+            ZoneFactory debugFactory = new BBoxZone.Factory(boxMaterial);
+            int debugSpacing = 16;
+            int debugDistance = 128;
+            Grid debugGrid = new Grid(new Vector3f(debugSpacing, 32, debugSpacing), new Vector3f(0, (yBase + 32), 0));
+            PagedGrid debugPager = new PagedGrid(pager, debugFactory, builder, debugGrid, 2, debugDistance/debugSpacing);
+            land.attachChild(debugPager.getGridRoot());
         }
 
         // A location I happen to know is a good starting point for this particular
