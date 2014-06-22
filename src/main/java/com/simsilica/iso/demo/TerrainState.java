@@ -49,6 +49,8 @@ import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.simsilica.builder.Builder;
 import com.simsilica.builder.BuilderState;
+import com.simsilica.fx.sky.AtmosphericParameters;
+import com.simsilica.fx.sky.SkyState;
 import com.simsilica.iso.DensityVolume;
 import com.simsilica.iso.IsoTerrainZoneFactory;
 import com.simsilica.iso.MeshGenerator;
@@ -61,6 +63,7 @@ import com.simsilica.iso.util.BilinearArray;
 import com.simsilica.iso.volume.ResamplingVolume;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.event.BaseAppState;
+import com.simsilica.lemur.props.PropertyPanel;
 import com.simsilica.pager.Grid;
 import com.simsilica.pager.PagedGrid;
 import com.simsilica.pager.ZoneFactory;
@@ -113,9 +116,32 @@ public class TerrainState extends BaseAppState {
     private Material terrainMaterial;
     private Material grassMaterial;
 
+    private PropertyPanel settings;
+    private boolean useScattering;
+
     public TerrainState() {
         this.worldVolume = new GemsFractalDensityVolume();
     }
+
+    public PropertyPanel getSettings() {
+        return settings;
+    }
+    
+    public void setUseAtmospherics( boolean b ) {
+        if( this.useScattering == b ) {
+            return;
+        }
+        this.useScattering = b;
+        resetAtmospherics();
+    }
+ 
+    public boolean getUseAtmospherics() {
+        return useScattering;
+    }
+    
+    protected void resetAtmospherics() {
+        terrainMaterial.setBoolean("UseScattering", useScattering);        
+    }    
 
     @Override
     protected void initialize( Application app ) {
@@ -314,7 +340,17 @@ public class TerrainState extends BaseAppState {
                         worldOffset.set(x, 0, z);
                     }
                 });
-                                 
+ 
+        // Setup for atmospherics
+        AtmosphericParameters atmosphericParms = getState(SkyState.class).getAtmosphericParameters();
+        atmosphericParms.applyGroundParameters(getTerrainMaterial(), true);
+ 
+        // Setup a settings panel        
+        settings = new PropertyPanel("glass");
+        settings.addBooleanProperty("Use Atmospherics", this, "useAtmospherics");
+        settings.addFloatProperty("Ground Exposure", atmosphericParms, "groundExposure", 0, 10, 0.1f);
+        
+        resetAtmospherics();
     }
 
     @Override

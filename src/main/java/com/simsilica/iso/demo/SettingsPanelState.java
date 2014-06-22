@@ -95,7 +95,9 @@ public class SettingsPanelState extends BaseAppState {
         // for it.
         SkySettingsState skySettings = getState(SkySettingsState.class);
         getParameterTabs().addTab("Sky", skySettings.getSettings());                
-        
+
+        TerrainState terrain = getState(TerrainState.class);
+        getParameterTabs().addTab("Ground", terrain.getSettings());                        
     }
 
     @Override
