@@ -41,10 +41,13 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.MaterialDef;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.SceneGraphVisitorAdapter;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.simsilica.builder.Builder;
@@ -68,6 +71,8 @@ import com.simsilica.pager.Grid;
 import com.simsilica.pager.PagedGrid;
 import com.simsilica.pager.ZoneFactory;
 import com.simsilica.pager.debug.BBoxZone;
+import java.util.HashSet;
+import java.util.Set;
 
 
 
@@ -116,6 +121,8 @@ public class TerrainState extends BaseAppState {
     private Material terrainMaterial;
     private Material grassMaterial;
 
+    private Set<Material> treeMaterials = new HashSet<Material>();
+
     private PropertyPanel settings;
     private boolean useScattering;
 
@@ -140,7 +147,10 @@ public class TerrainState extends BaseAppState {
     }
     
     protected void resetAtmospherics() {
-        terrainMaterial.setBoolean("UseScattering", useScattering);        
+        terrainMaterial.setBoolean("UseScattering", useScattering);
+        for( Material m : treeMaterials ) {
+            m.setBoolean("UseScattering", useScattering);
+        }        
     }    
 
     @Override
@@ -296,6 +306,32 @@ public class TerrainState extends BaseAppState {
             
             Node tree1 = (Node)app.getAssetManager().loadModel("Models/short-tree1-full-LOD.j3o");
             Node tree2 = (Node)app.getAssetManager().loadModel("Models/tall-tree2-full-LOD.j3o");
+ 
+            // Collect the tree materials
+            tree1.depthFirstTraversal(new SceneGraphVisitorAdapter() {
+                        @Override
+                        public void visit( Geometry geom ) {
+                            MaterialDef matDef = geom.getMaterial().getMaterialDef();
+                            System.out.println( "Geom:" + geom );
+                            System.out.println( "Material def:" + matDef.getAssetName() );
+                            if( matDef.getMaterialParam("UseScattering") != null ) {                             
+                                treeMaterials.add(geom.getMaterial());
+                            }
+                        }
+                    });
+            tree2.depthFirstTraversal(new SceneGraphVisitorAdapter() {
+                        @Override
+                        public void visit( Geometry geom ) {
+                            treeMaterials.add(geom.getMaterial());
+                            MaterialDef matDef = geom.getMaterial().getMaterialDef();
+                            System.out.println( "Geom:" + geom );
+                            System.out.println( "Material def:" + matDef.getAssetName() );
+                            if( matDef.getMaterialParam("UseScattering") != null ) {                             
+                                treeMaterials.add(geom.getMaterial());
+                            }
+                        }
+                    });
+             
         
             Material treeMaterial = GuiGlobals.getInstance().createMaterial(ColorRGBA.White, false).getMaterial();
             treeMaterial.getAdditionalRenderState().setWireframe(true);
@@ -344,6 +380,13 @@ public class TerrainState extends BaseAppState {
         // Setup for atmospherics
         AtmosphericParameters atmosphericParms = getState(SkyState.class).getAtmosphericParameters();
         atmosphericParms.applyGroundParameters(getTerrainMaterial(), true);
+ 
+        // Hook up the tree materials, too
+        for( Material m : treeMaterials ) {
+            MaterialDef matDef = m.getMaterialDef();
+            System.out.println( "Material def:" + matDef.getAssetName() );
+            atmosphericParms.applyGroundParameters(m, true);
+        }
  
         // Setup a settings panel        
         settings = new PropertyPanel("glass");
