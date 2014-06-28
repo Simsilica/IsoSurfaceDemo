@@ -48,6 +48,7 @@ import com.simsilica.fx.LightingState;
 import com.simsilica.fx.sky.SkyState;
 import com.simsilica.fx.sky.SkySettingsState;
 import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.event.MouseAppState;
 import com.simsilica.lemur.input.InputMapper;
 import com.simsilica.lemur.style.BaseStyles;
 import java.awt.image.BufferedImage;
@@ -131,6 +132,15 @@ public class Main extends SimpleApplication {
 
         rootNode.attachChild(geom);
         */ 
+
+        // We'll tell MouseAppState not to add viewports by default
+        // and then we'll manually add the guiViewport.
+        // We don't want to pick against the terrain because
+        // the generation of collision data takes a while
+        stateManager.getState(MouseAppState.class).setIncludeDefaultCollisionRoots(false);
+        stateManager.getState(MouseAppState.class).addCollisionRoot(guiViewPort);
+        
+
 
         BaseStyles.loadGlassStyle();
         
