@@ -306,7 +306,9 @@ public class TerrainState extends BaseAppState {
             
             Node tree1 = (Node)app.getAssetManager().loadModel("Models/short-tree1-full-LOD.j3o");
             Node tree2 = (Node)app.getAssetManager().loadModel("Models/tall-tree2-full-LOD.j3o");
- 
+            Node tree3 = (Node)app.getAssetManager().loadModel("Models/tipped-tree-full-LOD.j3o");
+            Node tree4 = (Node)app.getAssetManager().loadModel("Models/short-branching-full-LOD.j3o");
+             
             // Collect the tree materials
             tree1.depthFirstTraversal(new SceneGraphVisitorAdapter() {
                         @Override
@@ -331,6 +333,32 @@ public class TerrainState extends BaseAppState {
                             }
                         }
                     });
+            tree3.depthFirstTraversal(new SceneGraphVisitorAdapter() {
+                        @Override
+                        public void visit( Geometry geom ) {
+                            treeMaterials.add(geom.getMaterial());
+                            MaterialDef matDef = geom.getMaterial().getMaterialDef();
+                            geom.getMaterial().setBoolean("UseWind", false);
+                            System.out.println( "Geom:" + geom );
+                            System.out.println( "Material def:" + matDef.getAssetName() );
+                            if( matDef.getMaterialParam("UseScattering") != null ) {                             
+                                treeMaterials.add(geom.getMaterial());
+                            }
+                        }
+                    });
+            tree4.depthFirstTraversal(new SceneGraphVisitorAdapter() {
+                        @Override
+                        public void visit( Geometry geom ) {
+                            treeMaterials.add(geom.getMaterial());
+                            MaterialDef matDef = geom.getMaterial().getMaterialDef();
+                            geom.getMaterial().setBoolean("UseWind", false);
+                            System.out.println( "Geom:" + geom );
+                            System.out.println( "Material def:" + matDef.getAssetName() );
+                            if( matDef.getMaterialParam("UseScattering") != null ) {                             
+                                treeMaterials.add(geom.getMaterial());
+                            }
+                        }
+                    });
              
         
             Material treeMaterial = GuiGlobals.getInstance().createMaterial(ColorRGBA.White, false).getMaterial();
@@ -341,7 +369,7 @@ public class TerrainState extends BaseAppState {
  
             int treeGridSpacing = 16;   
             Grid treeGrid = new Grid(new Vector3f(treeGridSpacing, 32, treeGridSpacing), new Vector3f(0, (yBase + 32), 0));  
-            ZoneFactory treeFactory = new TreeZone.Factory(treeMaterial, noise, tree1, tree2);
+            ZoneFactory treeFactory = new TreeZone.Factory(treeMaterial, noise, tree4, tree1, tree3, tree2);
             
             int treeDistance = 128;
             PagedGrid treePager = new PagedGrid(pager, treeFactory, builder, treeGrid, 2, treeDistance / treeGridSpacing);
@@ -386,6 +414,12 @@ public class TerrainState extends BaseAppState {
             MaterialDef matDef = m.getMaterialDef();
             System.out.println( "Material def:" + matDef.getAssetName() );
             atmosphericParms.applyGroundParameters(m, true);
+            
+            //m.setColor("Diffuse", ColorRGBA.Blue);
+            System.out.println( "Existing ambient:" + m.getParam("Ambient") ); 
+            System.out.println( "Existing diffuse:" + m.getParam("Diffuse") ); 
+            m.setColor("Ambient", new ColorRGBA(1.1f, 1.1f, 1.1f, 1));
+            m.setColor("Diffuse", new ColorRGBA(0.9f, 0.9f, 0.9f, 1));
         }
  
         // Setup a settings panel        
@@ -398,6 +432,7 @@ public class TerrainState extends BaseAppState {
 
     @Override
     protected void cleanup( Application app ) {
+        pager.release();
     }
 
     @Override

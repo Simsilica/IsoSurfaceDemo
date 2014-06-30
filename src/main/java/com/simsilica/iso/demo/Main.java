@@ -40,6 +40,7 @@ import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
@@ -97,7 +98,6 @@ public class Main extends SimpleApplication {
               new LightingState(),
               new SkyState(),
               new SkySettingsState(),
-              new BuilderState(4, 4),
               new MovementState(),
               new TerrainState(),
               new SettingsPanelState(),
@@ -105,6 +105,7 @@ public class Main extends SimpleApplication {
               new MaterialSettingsState(),
               new PostProcessingState(),
               new DebugHudState(),
+              new BuilderState(4, 4),
               new ScreenshotAppState("", System.currentTimeMillis())); 
     }
  
@@ -149,6 +150,7 @@ public class Main extends SimpleApplication {
         // Setup some defaults we like with this scene
         stateManager.getState(LightingState.class).setTimeOfDay(0.05f);
         stateManager.getState(LightingState.class).setOrientation(FastMath.HALF_PI); 
+        //stateManager.getState(LightingState.class).setAmbient(new ColorRGBA(0.5f, 0.5f, 0.5f, 1));
 
     }    
 }
