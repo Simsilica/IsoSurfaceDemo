@@ -280,6 +280,7 @@ public class TerrainState extends BaseAppState {
         
             PagedGrid grassPager = new PagedGrid(pager, grassFactory, builder, grassGrid, 2, grassDistance / 32);
             grassPager.setPriorityBias(2);
+            grassPager.setTrackViewLocation(true);
             land.attachChild(grassPager.getGridRoot());
         } 
 
@@ -382,7 +383,7 @@ public class TerrainState extends BaseAppState {
             Material boxMaterial = GuiGlobals.getInstance().createMaterial(ColorRGBA.Red, false).getMaterial();
             boxMaterial.getAdditionalRenderState().setWireframe(true);            
             ZoneFactory debugFactory = new BBoxZone.Factory(boxMaterial);
-            int debugSpacing = 16;
+            int debugSpacing = 32;
             int debugDistance = 128;
             Grid debugGrid = new Grid(new Vector3f(debugSpacing, 32, debugSpacing), new Vector3f(0, (yBase + 32), 0));
             PagedGrid debugPager = new PagedGrid(pager, debugFactory, builder, debugGrid, 2, debugDistance/debugSpacing);
