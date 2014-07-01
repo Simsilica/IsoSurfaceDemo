@@ -427,8 +427,38 @@ public class TerrainState extends BaseAppState {
         settings = new PropertyPanel("glass");
         settings.addBooleanProperty("Use Atmospherics", this, "useAtmospherics");
         settings.addFloatProperty("Ground Exposure", atmosphericParms, "groundExposure", 0, 10, 0.1f);
+        //settings.addFloatProperty("Planet Radius", atmosphericParms, "planetRadius", 4400, 63781, 10);
+        settings.addFloatProperty("Air Density (%)", this, "airDensity", 0, 100, 0.001f ); 
         
         resetAtmospherics();
+    }
+    
+    public void setAirDensity( float f ) {
+        // Really we are setting the planet radius relative
+        // to our land units.  Smaller radius means that a unit 
+        // represents more "atmospheric distance".
+        // 100% is the smalled radius we can support... 4400 achieved
+        // by trial and error.
+        // 0 should be sufficiently large as to have almost no atmospherics.
+        float max = 63781;
+        float min = 4400;
+        float rad = min + (max - min) * (1 - (f * 0.01f)); 
+        AtmosphericParameters atmosphericParms = getState(SkyState.class).getAtmosphericParameters();
+        atmosphericParms.setPlanetRadius(rad);
+        
+        // I don't want this to affect the ground disc so I will hack in 
+        // a work-around
+        getState(SkyState.class).getGroundDiscMaterial().setFloat("PlanetScale", 10/max); 
+
+    }
+    
+    public float getAirDensity() {
+        float max = 63781;
+        float min = 4400;
+        AtmosphericParameters atmosphericParms = getState(SkyState.class).getAtmosphericParameters();
+        float rad = atmosphericParms.getPlanetRadius();
+        float relative = rad - min;
+        return 100 - (relative / (max - min) * 100); 
     }
 
     @Override
