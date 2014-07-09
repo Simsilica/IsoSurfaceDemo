@@ -52,9 +52,11 @@ public class MainFunctions {
 
     public static final FunctionId F_TOGGLE_MOVEMENT = new FunctionId(GROUP, "Toggle Movement");
     public static final FunctionId F_HUD = new FunctionId(GROUP, "HUD Toggle");
+    public static final FunctionId F_RECORD_VIDEO = new FunctionId(GROUP, "Record Video");
 
     public static void initializeDefaultMappings( InputMapper inputMapper ) {
         inputMapper.map( F_TOGGLE_MOVEMENT, KeyInput.KEY_SPACE );
         inputMapper.map( F_HUD, KeyInput.KEY_F3 );
+        inputMapper.map( F_RECORD_VIDEO, KeyInput.KEY_F12 );
     }
 }

@@ -40,7 +40,7 @@ import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.app.state.ScreenshotAppState;
-import com.jme3.math.ColorRGBA;
+import com.jme3.app.state.VideoRecorderAppState;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
@@ -53,6 +53,7 @@ import com.simsilica.lemur.event.MouseAppState;
 import com.simsilica.lemur.input.InputMapper;
 import com.simsilica.lemur.style.BaseStyles;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.slf4j.Logger;
@@ -69,6 +70,7 @@ public class Main extends SimpleApplication {
     static Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main( String... args ) {        
+        
         Main main = new Main();
 
         AppSettings settings = new AppSettings(false);
@@ -100,6 +102,8 @@ public class Main extends SimpleApplication {
               new SkySettingsState(),
               new MovementState(),
               new TerrainState(),
+              new WalkingMovementHandler(),
+              new TestArrowState(),
               new SettingsPanelState(),
               new CameraState(70, 0.1f, 1000),
               new MaterialSettingsState(),
@@ -107,6 +111,16 @@ public class Main extends SimpleApplication {
               new DebugHudState(),
               new BuilderState(4, 4),
               new ScreenshotAppState("", System.currentTimeMillis())); 
+    }
+ 
+    public void toggleRecordVideo() {
+        VideoRecorderAppState recorder = stateManager.getState(VideoRecorderAppState.class);
+        if( recorder == null ) {
+            recorder = new VideoRecorderAppState(new File("isodemo-" + System.currentTimeMillis() + ".avi"));
+            stateManager.attach(recorder);
+        } else {
+            stateManager.detach(recorder);
+        }
     }
  
     @Override
@@ -119,6 +133,7 @@ public class Main extends SimpleApplication {
         inputMapper.activateGroup(MainFunctions.GROUP);        
         MovementFunctions.initializeDefaultMappings(inputMapper);
 
+        inputMapper.addDelegate(MainFunctions.F_RECORD_VIDEO, this, "toggleRecordVideo");
 
         /*
         // Now create the normal simple test scene    

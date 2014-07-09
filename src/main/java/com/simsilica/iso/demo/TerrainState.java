@@ -64,6 +64,7 @@ import com.simsilica.iso.plot.PlotFrequencyZone;
 import com.simsilica.iso.plot.TreeZone;
 import com.simsilica.iso.util.BilinearArray;
 import com.simsilica.iso.volume.ResamplingVolume;
+import com.simsilica.iso.volume.TestVolume;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.event.BaseAppState;
 import com.simsilica.lemur.props.PropertyPanel;
@@ -133,6 +134,10 @@ public class TerrainState extends BaseAppState {
     public PropertyPanel getSettings() {
         return settings;
     }
+ 
+    public Vector3f getWorldOffset() {
+        return worldOffset;
+    }
     
     public void setUseAtmospherics( boolean b ) {
         if( this.useScattering == b ) {
@@ -144,6 +149,10 @@ public class TerrainState extends BaseAppState {
  
     public boolean getUseAtmospherics() {
         return useScattering;
+    }
+    
+    public DensityVolume getWorldVolume() {
+        return worldVolume;
     }
     
     protected void resetAtmospherics() {
@@ -217,6 +226,8 @@ public class TerrainState extends BaseAppState {
         // We will need a material
         Material terrainMaterial = getTerrainMaterial();
  
+        //worldVolume = new TestVolume(0, 0, 0, 40);                                             
+  
         // A potentially resampled world volume if we are super-sampling
         DensityVolume volume = worldVolume;
         if( xzScale != 1 ) {
@@ -226,7 +237,8 @@ public class TerrainState extends BaseAppState {
             // but we'll cover a lot more (ahem) ground for the same
             // amount of work.       
             volume = new ResamplingVolume(new Vector3f(xzScale, 1, xzScale), volume);
-        }                                             
+        }
+        
  
         // And a mesh generator.
         // This may look a bit strange but the factory nicely takes a Guava Supplier
@@ -397,14 +409,16 @@ public class TerrainState extends BaseAppState {
         
         // And finally, we need to have our camera movement go through the
         // pager instead of directly to the camera
-        getState(MovementState.class).setMovementHandler(
-                new PagedGridMovementHandler(pager, app.getCamera()) {
+        MovementHandler mover = new PagedGridMovementHandler(pager, app.getCamera()) {
                     @Override 
                     protected void setLandLocation( float x, float z ) {
                         super.setLandLocation(x, z);
                         worldOffset.set(x, 0, z);
                     }
-                });
+                };
+                 
+        getState(MovementState.class).setMovementHandler(mover);
+ 
  
         // Setup for atmospherics
         AtmosphericParameters atmosphericParms = getState(SkyState.class).getAtmosphericParameters();

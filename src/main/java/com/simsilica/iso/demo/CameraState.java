@@ -107,6 +107,12 @@ public class CameraState extends BaseAppState {
         
         properties = new PropertyPanel("glass");
         properties.addFloatProperty("Field of View", this, "fieldOfView", 20, 120, 1);
+ 
+        if( getState(WalkingMovementHandler.class) != null ) {
+            WalkingMovementHandler walker = getState(WalkingMovementHandler.class);
+            properties.addBooleanProperty("Walk Mode", walker, "enabled");
+            properties.addFloatProperty("Eye Offset", walker, "eyeOffset", 0.2f, 2f, 0.1f); 
+        }
         
         if( getState(SettingsPanelState.class) != null ) {
             getState(SettingsPanelState.class).getParameterTabs().addTab("Camera", properties);
