@@ -60,11 +60,11 @@ import com.simsilica.iso.MeshGenerator;
 import com.simsilica.iso.fractal.GemsFractalDensityVolume;
 import com.simsilica.iso.mc.MarchingCubesMeshGenerator;
 import com.simsilica.iso.plot.GrassZone;
+import com.simsilica.iso.plot.InstancedTreeZone;
 import com.simsilica.iso.plot.PlotFrequencyZone;
 import com.simsilica.iso.plot.TreeZone;
 import com.simsilica.iso.util.BilinearArray;
 import com.simsilica.iso.volume.ResamplingVolume;
-import com.simsilica.iso.volume.TestVolume;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.event.BaseAppState;
 import com.simsilica.lemur.props.PropertyPanel;
@@ -317,63 +317,19 @@ public class TerrainState extends BaseAppState {
         boolean trees = true;
         if( trees ) {
             
+            final boolean instancedTrees = true;
+            
             Node tree1 = (Node)app.getAssetManager().loadModel("Models/short-tree1-full-LOD.j3o");
             Node tree2 = (Node)app.getAssetManager().loadModel("Models/tall-tree2-full-LOD.j3o");
             Node tree3 = (Node)app.getAssetManager().loadModel("Models/tipped-tree-full-LOD.j3o");
             Node tree4 = (Node)app.getAssetManager().loadModel("Models/short-branching-full-LOD.j3o");
              
             // Collect the tree materials
-            tree1.depthFirstTraversal(new SceneGraphVisitorAdapter() {
-                        @Override
-                        public void visit( Geometry geom ) {
-                            MaterialDef matDef = geom.getMaterial().getMaterialDef();
-                            System.out.println( "Geom:" + geom );
-                            System.out.println( "Material def:" + matDef.getAssetName() );
-                            if( matDef.getMaterialParam("UseScattering") != null ) {                             
-                                treeMaterials.add(geom.getMaterial());
-                            }
-                        }
-                    });
-            tree2.depthFirstTraversal(new SceneGraphVisitorAdapter() {
-                        @Override
-                        public void visit( Geometry geom ) {
-                            treeMaterials.add(geom.getMaterial());
-                            MaterialDef matDef = geom.getMaterial().getMaterialDef();
-                            System.out.println( "Geom:" + geom );
-                            System.out.println( "Material def:" + matDef.getAssetName() );
-                            if( matDef.getMaterialParam("UseScattering") != null ) {                             
-                                treeMaterials.add(geom.getMaterial());
-                            }
-                        }
-                    });
-            tree3.depthFirstTraversal(new SceneGraphVisitorAdapter() {
-                        @Override
-                        public void visit( Geometry geom ) {
-                            treeMaterials.add(geom.getMaterial());
-                            MaterialDef matDef = geom.getMaterial().getMaterialDef();
-                            geom.getMaterial().setBoolean("UseWind", false);
-                            System.out.println( "Geom:" + geom );
-                            System.out.println( "Material def:" + matDef.getAssetName() );
-                            if( matDef.getMaterialParam("UseScattering") != null ) {                             
-                                treeMaterials.add(geom.getMaterial());
-                            }
-                        }
-                    });
-            tree4.depthFirstTraversal(new SceneGraphVisitorAdapter() {
-                        @Override
-                        public void visit( Geometry geom ) {
-                            treeMaterials.add(geom.getMaterial());
-                            MaterialDef matDef = geom.getMaterial().getMaterialDef();
-                            geom.getMaterial().setBoolean("UseWind", false);
-                            System.out.println( "Geom:" + geom );
-                            System.out.println( "Material def:" + matDef.getAssetName() );
-                            if( matDef.getMaterialParam("UseScattering") != null ) {                             
-                                treeMaterials.add(geom.getMaterial());
-                            }
-                        }
-                    });
-             
-        
+            setupTreeMaterials(tree1, instancedTrees);
+            setupTreeMaterials(tree2, instancedTrees);
+            setupTreeMaterials(tree3, instancedTrees);
+            setupTreeMaterials(tree4, instancedTrees);
+                    
             Material treeMaterial = GuiGlobals.getInstance().createMaterial(ColorRGBA.White, false).getMaterial();
             treeMaterial.getAdditionalRenderState().setWireframe(true);
             treeMaterial.setBoolean("VertexColor", true);
@@ -381,8 +337,13 @@ public class TerrainState extends BaseAppState {
             BilinearArray noise = BilinearArray.fromTexture(app.getAssetManager().loadTexture("Textures/noise-x3-512.png"));        
  
             int treeGridSpacing = 16;   
-            Grid treeGrid = new Grid(new Vector3f(treeGridSpacing, 32, treeGridSpacing), new Vector3f(0, (yBase + 32), 0));  
-            ZoneFactory treeFactory = new TreeZone.Factory(treeMaterial, noise, tree4, tree1, tree3, tree2);
+            Grid treeGrid = new Grid(new Vector3f(treeGridSpacing, 32, treeGridSpacing), new Vector3f(0, (yBase + 32), 0));
+            ZoneFactory treeFactory;
+            if( instancedTrees ) {  
+                treeFactory = new InstancedTreeZone.Factory(treeMaterial, noise, tree4, tree1, tree3, tree2);
+            } else {
+                treeFactory = new TreeZone.Factory(treeMaterial, noise, tree4, tree1, tree3, tree2);
+            }
             
             int treeDistance = 128;
             PagedGrid treePager = new PagedGrid(pager, treeFactory, builder, treeGrid, 2, treeDistance / treeGridSpacing);
@@ -592,6 +553,32 @@ public class TerrainState extends BaseAppState {
         grassMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
         return grassMaterial;        
     }
+    
+    protected void setupTreeMaterials( Node tree, final boolean instancedTrees ) {
+     
+        // Collect the tree materials
+        tree.depthFirstTraversal(new SceneGraphVisitorAdapter() {
+                        @Override
+                        public void visit( Geometry geom ) {
+                            MaterialDef matDef = geom.getMaterial().getMaterialDef();
+                            System.out.println( "Geom:" + geom );
+                            System.out.println( "Material def:" + matDef.getAssetName() );
+                            if( matDef.getMaterialParam("UseScattering") != null ) {                             
+                                treeMaterials.add(geom.getMaterial());
+                            }
+                            if( matDef.getMaterialParam("UseInstancing") != null ) {                             
+                                geom.getMaterial().setBoolean("UseInstancing", instancedTrees);
+                            }
+                            if( matDef.getMaterialParam("UseWind") != null ) {
+                                // Wind only works with instancing                             
+                                geom.getMaterial().setBoolean("UseWind", instancedTrees);
+                            }
+                            if( matDef.getMaterialParam("WorldNoiseOffset") != null ) {
+                                geom.getMaterial().setVector3("WorldNoiseOffset", worldOffset);
+                            }                            
+                        }
+                    });
+    }   
 }
 
 

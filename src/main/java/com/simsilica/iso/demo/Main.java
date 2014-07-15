@@ -167,6 +167,6 @@ public class Main extends SimpleApplication {
         stateManager.getState(LightingState.class).setOrientation(FastMath.HALF_PI); 
         //stateManager.getState(LightingState.class).setAmbient(new ColorRGBA(0.5f, 0.5f, 0.5f, 1));
 
-    }    
+    }
 }
 
