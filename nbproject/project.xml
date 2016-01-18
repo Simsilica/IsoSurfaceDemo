@@ -34,7 +34,7 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>Lemur</foreign-project>
+                <foreign-project>Lemur-1</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
@@ -42,7 +42,7 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>LemurProps</foreign-project>
+                <foreign-project>LemurProps-1</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
