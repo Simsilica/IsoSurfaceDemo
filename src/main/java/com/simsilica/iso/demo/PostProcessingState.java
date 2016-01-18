@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: PostProcessingState.java 146 2014-06-21 17:37:56Z pspeed42 $
  * 
  * Copyright (c) 2014, Simsilica, LLC
  * All rights reserved.
@@ -111,6 +111,8 @@ public class PostProcessingState extends BaseAppState {
         
         properties = createFilterPanel("Shadows", shadows, main);        
         properties.addFloatProperty("Intensity", shadows, "shadowIntensity", 0.0f, 1, 0.01f);        
+        properties.addFloatProperty("Z Limit", shadows, "shadowZExtend", 0, 4000, 1);
+        properties.addFloatProperty("Z Fade", shadows, "shadowZFadeLength", 0, 1000, 1);
 
 
         // Then SSAO
@@ -167,7 +169,7 @@ public class PostProcessingState extends BaseAppState {
         properties.addFloatProperty("Transparency", water, "waterTransparency", 0, 2, 0.001f);
         properties.addFloatProperty("Reflection Displace", water, "reflectionDisplace", 0.0f, 100, 0.1f);                                         
         properties.addFloatProperty("Refraction Constant", water, "refractionConstant", 0.0f, 1, 0.01f);                                         
-        properties.addFloatProperty("Refraction Strength", water, "refractionStrength", 0.0f, 1, 0.01f);
+        properties.addFloatProperty("Refraction Strength", water, "refractionStrength", -1, 1, 0.01f);
         
         properties = waterTabs.addTab("Under", new PropertyPanel("glass"));
         properties.addBooleanProperty("Use Caustics", water, "useCaustics");
