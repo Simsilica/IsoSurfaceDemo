@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: TerrainState.java 186 2014-07-15 08:40:50Z pspeed42 $
  * 
  * Copyright (c) 2014, Simsilica, LLC
  * All rights reserved.
@@ -86,7 +86,7 @@ public class TerrainState extends BaseAppState {
 
     public static final int CHUNK_SIZE_XZ = 64;
     public static final int CHUNK_SIZE_Y = 32;
-    
+     
     /**
      *  The root level terrain pager that constructs the land geometry
      *  and has all of the other children that generate flora, debris,
@@ -187,6 +187,11 @@ public class TerrainState extends BaseAppState {
         // It's a small reduction in quality but a huge win in the
         // number of zones we can display at once.
         final float xzScale = 1;
+        //final float xzScale = 2;
+        // Note: changing the scale messes up the collision stuff
+        // because it should be sampling the unscaled volume...
+        // really the volume scaling should be encapsulated in the
+        // zone factory and not messing up the world volume.
                 
         int xzSize = (int)(cx * xzScale);
         
